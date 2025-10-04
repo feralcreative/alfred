@@ -1,4 +1,4 @@
-# Augment Code Workflow
+# <img src="./icon.png" width="32" height="32" alt="Augment Code Tasks"> Augment Code Workflow
 
 This Alfred workflow provides productivity tools for development, including task entry creation and process management.
 

@@ -4,7 +4,7 @@ A collection of productivity-focused Alfred workflows for macOS developers and p
 
 ## Workflows
 
-### 🔧 [Augment Code Tasks](./alfred-augment/)
+### <img src="./alfred-augment/icon.png" width="24" height="24" alt="Augment Code Tasks"> [Augment Code Tasks](./alfred-augment/)
 
 Productivity tools for development workflow management, including task entry creation and process management.
 
@@ -15,7 +15,7 @@ Productivity tools for development workflow management, including task entry cre
 
 [→ View detailed documentation](./alfred-augment/README.md)
 
-### 🖼️ [ImageOptim-ize](./imageoptim-ize/)
+### <img src="./imageoptim-ize/images/icons/icon-imageoptim-ize.svg" width="24" height="24" alt="ImageOptim-ize"> [ImageOptim-ize](./imageoptim-ize/)
 
 Streamline image optimization directly from Finder using ImageOptim.
 
@@ -50,7 +50,7 @@ Convert images between PNG and JPEG formats directly from Finder with intelligen
 
 [→ View detailed documentation](./image-convert/README.md)
 
-### 🧹 [Sanitize Filenames](./sanitize-filenames/)
+### <img src="./sanitize-filenames/images/icons/icon-sanitize-files.svg" width="24" height="24" alt="Sanitize Filenames"> [Sanitize Filenames](./sanitize-filenames/)
 
 Clean up filenames for web use by converting them to kebab-case and removing special characters.
 

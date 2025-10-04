@@ -1,4 +1,4 @@
-# ImageOptim-ize
+# <img src="./images/icons/icon-imageoptim-ize.svg" width="32" height="32" alt="ImageOptim-ize"> ImageOptim-ize
 
 This workflow is designed to streamline the process of optimizing images directly from the Finder. It works in MacOS only, because [Alfred](https://www.alfredapp.com/) works in MacOS only.
 
