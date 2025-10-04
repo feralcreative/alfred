@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.ezzat.port-roulette</string>
+	<key>category</key>
+	<string>Tools</string>
+	<key>connections</key>
+	<dict>
+		<key>B8F8F8F8-B8F8-B8F8-B8F8-B8F8F8F8F8F8</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C9F9F9F9-C9F9-C9F9-C9F9-C9F9F9F9F9F9</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Ziad Ezzat</string>
+	<key>description</key>
+	<string>Generate unique port numbers for development projects. Avoids well-known ports and remembers previously assigned ports.</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Port Roulette</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>port</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemaxsize</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Generating port number...</string>
+				<key>script</key>
+				<string>/usr/bin/python3 port-roulette.py "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Generate a unique port number for your project</string>
+				<key>title</key>
+				<string>Port Roulette</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>B8F8F8F8-B8F8-B8F8-B8F8-B8F8F8F8F8F8</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>C9F9F9F9-C9F9-C9F9-C9F9-C9F9F9F9F9F9</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>Port Roulette - Generate unique port numbers for development projects
+
+Usage:
+- Type "port" followed by your project name
+- Example: "port pge" for a project called "pge"
+
+Features:
+- Converts project names to numbers (a=1, b=2, etc.)
+- Avoids well-known ports (0-1023) and common application ports
+- Remembers previously assigned ports to avoid conflicts
+- Automatically finds alternative ports if conflicts occur
+- Copies the port number to clipboard when selected
+
+The workflow maintains a configuration file at ~/.port-roulette-config.json to track assigned ports.</string>
+	<key>uidata</key>
+	<dict>
+		<key>B8F8F8F8-B8F8-B8F8-B8F8-B8F8F8F8F8F8</key>
+		<dict>
+			<key>xpos</key>
+			<integer>100</integer>
+			<key>ypos</key>
+			<integer>100</integer>
+		</dict>
+		<key>C9F9F9F9-C9F9-C9F9-C9F9-C9F9F9F9F9F9</key>
+		<dict>
+			<key>xpos</key>
+			<integer>300</integer>
+			<key>ypos</key>
+			<integer>100</integer>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/feralcreative/alfred</string>
+</dict>
+</plist>
