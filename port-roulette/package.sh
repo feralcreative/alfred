@@ -11,6 +11,7 @@ echo "Packaging Port Roulette Alfred Workflow..."
 # Copy necessary files to temp directory
 cp port-roulette.py "$TEMP_DIR/"
 cp info.plist "$TEMP_DIR/"
+cp icon.png "$TEMP_DIR/"
 
 # Create the workflow package
 cd "$TEMP_DIR"

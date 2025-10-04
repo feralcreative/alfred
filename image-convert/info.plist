@@ -36,7 +36,7 @@
         </array>
     </dict>
     <key>createdby</key>
-    <string>Custom</string>
+    <string>Ziad Ezzat</string>
     <key>description</key>
     <string>Convert between PNG and JPEG formats</string>
     <key>disabled</key>
@@ -104,5 +104,7 @@
     </array>
     <key>version</key>
     <string>1.0</string>
+    <key>webaddress</key>
+    <string>https://github.com/feralcreative/alfred</string>
 </dict>
 </plist>

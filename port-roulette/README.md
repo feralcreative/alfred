@@ -1,4 +1,4 @@
-# Port Roulette - Alfred Workflow
+# <img src="./images/icons/icon-port-roulette.svg" width="32" height="32" alt="Port Roulette"> Port Roulette - Alfred Workflow
 
 Generate unique port numbers for development projects with intelligent conflict avoidance.
 

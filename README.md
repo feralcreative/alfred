@@ -4,7 +4,7 @@ A collection of productivity-focused Alfred workflows for macOS developers and p
 
 ## Workflows
 
-### <img src="./alfred-augment/icon.png" width="24" height="24" alt="Augment Code Tasks"> [Augment Code Tasks](./alfred-augment/)
+### <img src="./alfred-augment/images/icons/icon-alfred-augment.svg" width="24" height="24" alt="Augment Code Tasks"> [Augment Code Tasks](./alfred-augment/)
 
 Productivity tools for development workflow management, including task entry creation and process management.
 
@@ -26,7 +26,7 @@ Streamline image optimization directly from Finder using ImageOptim.
 
 [→ View detailed documentation](./imageoptim-ize/README.md)
 
-### 🎲 [Port Roulette](./port-roulette/)
+### <img src="./port-roulette/images/icons/icon-port-roulette.svg" width="24" height="24" alt="Port Roulette"> [Port Roulette](./port-roulette/)
 
 Generate unique port numbers for development projects with intelligent conflict avoidance.
 
@@ -38,7 +38,7 @@ Generate unique port numbers for development projects with intelligent conflict 
 
 [→ View detailed documentation](./port-roulette/README.md)
 
-### 🖼️ [Image Convert](./image-convert/)
+### <img src="./image-convert/images/icons/icon-image-convert.svg" width="24" height="24" alt="Image Convert"> [Image Convert](./image-convert/)
 
 Convert images between PNG and JPEG formats directly from Finder with intelligent format detection.
 
@@ -50,7 +50,7 @@ Convert images between PNG and JPEG formats directly from Finder with intelligen
 
 [→ View detailed documentation](./image-convert/README.md)
 
-### <img src="./sanitize-filenames/images/icons/icon-sanitize-files.svg" width="24" height="24" alt="Sanitize Filenames"> [Sanitize Filenames](./sanitize-filenames/)
+### <img src="./sanitize-filenames/images/icons/icon-sanitize-filenames.svg" width="24" height="24" alt="Sanitize Filenames"> [Sanitize Filenames](./sanitize-filenames/)
 
 Clean up filenames for web use by converting them to kebab-case and removing special characters.
 
@@ -88,4 +88,4 @@ Individual workflows may have their own licenses. Please check each workflow's d
 
 ---
 
-**Author:** [ziad@feralcreative.dev](mailto:ziad@feralcreative.dev)
+**Author:** [ziad@feralcreative.co](mailto:ziad@feralcreative.co)

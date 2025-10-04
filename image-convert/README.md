@@ -1,4 +1,4 @@
-# Image Convert - Alfred Workflow
+# <img src="./images/icons/icon-image-convert.svg" width="32" height="32" alt="Image Convert"> Image Convert - Alfred Workflow
 
 Convert images between PNG and JPEG formats directly from Finder with intelligent format detection.
 

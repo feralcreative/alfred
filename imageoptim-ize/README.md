@@ -10,4 +10,4 @@ Once the optimization process is complete, a final notification is displayed, co
 
 All you need is the .alfredworkflow file to install and use—I just included the zsh script so it could be edited and version-controlled externally before being dropped back in to Alfred. The script in this directory is exactly what's in the workflow.
 
-[ziad@feralcreative.dev](mailto:ziad@feralcreative.dev)
+[ziad@feralcreative.co](mailto:ziad@feralcreative.co)
