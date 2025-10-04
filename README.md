@@ -4,11 +4,12 @@ A collection of productivity-focused Alfred workflows for macOS developers and p
 
 ## Workflows
 
-### <img src="./alfred-augment/images/icons/icon-alfred-augment.svg" width="24" height="24" alt="Augment Code Tasks"> [Augment Code Tasks](./alfred-augment/)
+### <img src="./alfred-augment/images/icons/icon-alfred-augment.png" width="24" height="24" alt="Augment Code Tasks"> [Augment Code Tasks](./alfred-augment/)
 
 Productivity tools for development workflow management, including task entry creation and process management.
 
 **Key Features:**
+
 - Create formatted task entries with the `au` command
 - Kill processes running on specific ports with `killport`
 - Compatible with Augment Code agent task management system
@@ -20,6 +21,7 @@ Productivity tools for development workflow management, including task entry cre
 Streamline image optimization directly from Finder using ImageOptim.
 
 **Key Features:**
+
 - Batch optimize selected images with a hotkey (default: ctrl+shift+cmd+I)
 - Automatic metadata removal and file size reduction
 - Progress notifications during optimization
@@ -31,6 +33,7 @@ Streamline image optimization directly from Finder using ImageOptim.
 Generate unique port numbers for development projects with intelligent conflict avoidance.
 
 **Key Features:**
+
 - Smart port generation based on project names
 - Avoids well-known ports and conflicts
 - Persistent memory of assigned ports
@@ -43,6 +46,7 @@ Generate unique port numbers for development projects with intelligent conflict 
 Convert images between PNG and JPEG formats directly from Finder with intelligent format detection.
 
 **Key Features:**
+
 - Smart format detection for PNG and JPEG files
 - Bidirectional conversion with high quality output
 - Batch processing of multiple files
@@ -55,6 +59,7 @@ Convert images between PNG and JPEG formats directly from Finder with intelligen
 Clean up filenames for web use by converting them to kebab-case and removing special characters.
 
 **Key Features:**
+
 - Converts filenames to lowercase
 - Removes special characters and replaces with web-safe alternatives
 - Converts spaces and underscores to dashes
