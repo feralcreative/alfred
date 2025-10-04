@@ -38,6 +38,18 @@ Generate unique port numbers for development projects with intelligent conflict 
 
 [→ View detailed documentation](./port-roulette/README.md)
 
+### 🖼️ [Image Convert](./image-convert/)
+
+Convert images between PNG and JPEG formats directly from Finder with intelligent format detection.
+
+**Key Features:**
+- Smart format detection for PNG and JPEG files
+- Bidirectional conversion with high quality output
+- Batch processing of multiple files
+- Preserves transparency in PNG conversions
+
+[→ View detailed documentation](./image-convert/README.md)
+
 ### 🧹 [Sanitize Filenames](./sanitize-filenames/)
 
 Clean up filenames for web use by converting them to kebab-case and removing special characters.
