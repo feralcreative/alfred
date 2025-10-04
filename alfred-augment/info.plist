@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>co.feralcreative.augment</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>D39763E1-3AC1-4E48-9B3F-188B02D934E8</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B0F2FD90-B5DC-42F2-84D5-9800E409CFB2</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>69599BEE-7D0F-4B46-988A-FF0F3C578BC3</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>2F974C3B-6F25-481E-A94B-2EFC68EF57D3</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Feral Creative</string>
+	<key>description</key>
+	<string>A workflow to help write task instructions for Augment Code agent.</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Augment Code Tasks</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>au</string>
+				<key>subtext</key>
+				<string>Enter task name to create formatted task entry</string>
+				<key>text</key>
+				<string>Augment Code Task</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>D39763E1-3AC1-4E48-9B3F-188B02D934E8</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>on run argv
+    set taskName to item 1 of argv
+    set taskEntry to "-[ ] NAME:" &amp; taskName &amp; " DESCRIPTION: "
+
+    -- Copy to clipboard
+    set the clipboard to taskEntry
+
+    -- Paste into active document
+    tell application "System Events"
+        keystroke "v" using command down
+    end tell
+
+    -- Show notification
+    display notification "Task entry pasted" with title "Augment Code"
+
+    return taskEntry
+end run</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>6</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>B0F2FD90-B5DC-42F2-84D5-9800E409CFB2</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>killport</string>
+				<key>subtext</key>
+				<string>Enter port number to kill processes using that port</string>
+				<key>text</key>
+				<string>Kill Process on Port</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>69599BEE-7D0F-4B46-988A-FF0F3C578BC3</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>on run argv
+    set portNumber to item 1 of argv
+    set killCommand to "lsof -ti:" &amp; portNumber &amp; " | xargs kill -9"
+
+    -- Copy to clipboard
+    set the clipboard to killCommand
+
+    -- Paste into active document
+    tell application "System Events"
+        keystroke "v" using command down
+    end tell
+
+    -- Show notification
+    display notification "Command pasted: " &amp; killCommand with title "Port Killer"
+
+    return killCommand
+end run</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>6</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>2F974C3B-6F25-481E-A94B-2EFC68EF57D3</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>This workflow provides productivity tools for development.
+
+Commands:
+
+1. au [task name] - Create formatted task entries for Augment Code agent
+   Format: -[ ] NAME:Task name DESCRIPTION:
+   The entry will be automatically pasted into the active document.
+
+2. killport [port number] - Kill processes running on a specific port
+   Example: killport 3000
+   Runs: lsof -ti:[port] | xargs kill -9</string>
+	<key>uidata</key>
+	<dict>
+		<key>D39763E1-3AC1-4E48-9B3F-188B02D934E8</key>
+		<dict>
+			<key>xpos</key>
+			<real>320</real>
+			<key>ypos</key>
+			<real>225</real>
+		</dict>
+		<key>B0F2FD90-B5DC-42F2-84D5-9800E409CFB2</key>
+		<dict>
+			<key>xpos</key>
+			<real>515</real>
+			<key>ypos</key>
+			<real>225</real>
+		</dict>
+		<key>69599BEE-7D0F-4B46-988A-FF0F3C578BC3</key>
+		<dict>
+			<key>xpos</key>
+			<real>320</real>
+			<key>ypos</key>
+			<real>430</real>
+		</dict>
+		<key>2F974C3B-6F25-481E-A94B-2EFC68EF57D3</key>
+		<dict>
+			<key>xpos</key>
+			<real>515</real>
+			<key>ypos</key>
+			<real>430</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://feralcreative.co</string>
+</dict>
+</plist>
