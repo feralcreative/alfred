@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Alfred Workflow Packager - Port Roulette
+# Alfred Workflow Packager - Sanitize Filenames
 # This script packages the Alfred workflow files into a .alfredworkflow file
 
 set -e  # Exit on any error
 
 # Configuration
-WORKFLOW_NAME="port-roulette"
-REQUIRED_FILES=("port-roulette.py" "info.plist")
-OPTIONAL_FILES=("icon.png" "README.md")
+WORKFLOW_NAME="sanitize-filenames"
+REQUIRED_FILES=("sanitize-filenames.applescript")
+OPTIONAL_FILES=("icon.png" "README.md" "LICENSE" "make-a-mess.applescript")
 
 # Colors for output
 RED='\033[0;31m'
@@ -35,7 +35,7 @@ print_error() {
 }
 
 # Header
-echo -e "${BLUE}🎲 Alfred Workflow Packager${NC}"
+echo -e "${BLUE}🧹 Alfred Workflow Packager${NC}"
 echo "================================"
 echo
 
@@ -49,17 +49,6 @@ for file in "${REQUIRED_FILES[@]}"; do
         exit 1
     fi
 done
-
-# Validate info.plist if it exists
-if [[ -f "info.plist" ]]; then
-    print_status "Validating info.plist..."
-    if plutil -lint info.plist >/dev/null 2>&1; then
-        print_success "✓ info.plist is valid"
-    else
-        print_error "✗ info.plist is invalid"
-        exit 1
-    fi
-fi
 
 # Create workflow package
 WORKFLOW_FILE="${WORKFLOW_NAME}.alfredworkflow"
@@ -87,7 +76,7 @@ done
 # Verify the package was created
 if [[ -f "$WORKFLOW_FILE" ]]; then
     print_success "✓ Created workflow package: $WORKFLOW_FILE"
-
+    
     # Test the zip file
     if zip -T "$WORKFLOW_FILE" >/dev/null 2>&1; then
         print_success "✓ Workflow package verified successfully"
@@ -95,7 +84,7 @@ if [[ -f "$WORKFLOW_FILE" ]]; then
         print_error "✗ Workflow package verification failed"
         exit 1
     fi
-
+    
     print_success "Package created successfully!"
     echo
     echo -e "${BLUE}📦 Workflow Details:${NC}"
