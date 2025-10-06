@@ -38,6 +38,8 @@ Generate unique port numbers for development projects with intelligent conflict 
 - Avoids well-known ports and conflicts
 - Persistent memory of assigned ports
 - Automatic clipboard copying
+- Configurable storage location
+- Database reset functionality
 
 [→ View detailed documentation](./port-roulette/README.md)
 

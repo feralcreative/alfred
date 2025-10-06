@@ -13,6 +13,8 @@ Port Roulette is an Alfred workflow that helps developers quickly generate and m
 - **Persistent Memory**: Remembers previously assigned ports to prevent conflicts
 - **Automatic Fallback**: If the calculated port is taken, automatically finds the next available port
 - **Instant Clipboard**: Selected port numbers are automatically copied to clipboard
+- **Configurable Storage**: Config file location can be easily customized
+- **Database Reset**: Reset functionality to clear all stored port assignments
 
 ## Installation
 
@@ -34,6 +36,7 @@ port <project-name>
 port pge          # Generates port for "pge" project (likely 1675: p=16, g=7, e=5)
 port myapp        # Generates port for "myapp" project
 port frontend     # Generates port for "frontend" project
+port reset        # Reset the port database to default state
 ```
 
 ### First Time vs. Subsequent Calls
@@ -98,9 +101,56 @@ All IANA-assigned well-known ports including HTTP (80), HTTPS (443), SSH (22), F
 
 ### Configuration Issues
 
-- The config file is stored at `~/.port-roulette-config.json`
-- Delete this file to reset all port assignments
-- Ensure write permissions to your home directory
+- The config file is stored at `~/www/_vscode/port-roulette-config.json` by default
+- Use `port reset` command to reset all port assignments
+- Ensure write permissions to the config directory
+
+## Configuration
+
+### Config File Location
+
+The workflow stores port assignments in a JSON configuration file. By default, this is located at:
+
+```
+~/www/_vscode/port-roulette-config.json
+```
+
+### Customizing Config Location
+
+To change the config file location, edit the `CONFIG_DIR` variable in `port-roulette.py`:
+
+```python
+# Configuration file path - can be customized by changing this line
+# Default: ~/www/_vscode/port-roulette-config.json
+# Alternative: ~/.port-roulette-config.json (original location)
+CONFIG_DIR = os.path.expanduser("~/www/_vscode")
+```
+
+Common alternatives:
+- `~/.port-roulette-config.json` (original location)
+- `~/.config/port-roulette/config.json`
+- `~/Documents/port-roulette-config.json`
+
+### Reset Database
+
+To reset all port assignments and start fresh:
+
+```bash
+port reset
+```
+
+This will:
+- Clear all project-to-port mappings
+- Reset the used ports list
+- Restore the database to its default empty state
+
+### Manual Reset
+
+Alternatively, you can manually delete the config file:
+
+```bash
+rm ~/www/_vscode/port-roulette-config.json
+```
 
 ## Development
 

@@ -10,8 +10,14 @@ import os
 import re
 from pathlib import Path
 
-# Configuration file path
-CONFIG_FILE = os.path.expanduser("~/.port-roulette-config.json")
+# Configuration file path - can be customized by changing this line
+# Default: ~/www/_vscode/port-roulette-config.json
+# Alternative: ~/.port-roulette-config.json (original location)
+CONFIG_DIR = os.path.expanduser("~/www/_vscode")
+CONFIG_FILE = os.path.join(CONFIG_DIR, "port-roulette-config.json")
+
+# Ensure config directory exists
+os.makedirs(CONFIG_DIR, exist_ok=True)
 
 # Well-known ports to avoid (System Ports 0-1023 and common application ports)
 WELL_KNOWN_PORTS = {
@@ -137,6 +143,12 @@ def save_config(config):
     except IOError:
         pass
 
+def reset_config():
+    """Reset configuration to default state"""
+    default_config = {"projects": {}, "used_ports": []}
+    save_config(default_config)
+    return default_config
+
 def project_name_to_number(name):
     """Convert project name to number using a=1, b=2, etc."""
     name = name.lower()
@@ -208,13 +220,23 @@ def alfred_output(title, subtitle, arg=""):
 
 def main():
     if len(sys.argv) < 2:
-        print(json.dumps(alfred_output("Port Roulette", "Usage: port <project-name>")))
+        print(json.dumps(alfred_output("Port Roulette", "Usage: port <project-name> or port reset")))
         return
 
     project_name = sys.argv[1].strip()
 
     if not project_name:
-        print(json.dumps(alfred_output("Port Roulette", "Please provide a project name")))
+        print(json.dumps(alfred_output("Port Roulette", "Please provide a project name or 'reset'")))
+        return
+
+    # Handle reset command
+    if project_name.lower() == "reset":
+        reset_config()
+        print(json.dumps(alfred_output(
+            "Database Reset",
+            "Port database has been reset to default state",
+            "reset"
+        )))
         return
 
     config = load_config()
