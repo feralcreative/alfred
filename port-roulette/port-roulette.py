@@ -10,14 +10,21 @@ import os
 import re
 from pathlib import Path
 
-# Configuration file path - can be customized by changing this line
-# Default: ~/www/_vscode/port-roulette-config.json
-# Alternative: ~/.port-roulette-config.json (original location)
-CONFIG_DIR = os.path.expanduser("~/www/_vscode")
-CONFIG_FILE = os.path.join(CONFIG_DIR, "port-roulette-config.json")
+# Configuration file path - configurable through Alfred's workflow settings
+# Read config directory from Alfred's user configuration
+HOME_DIR = os.environ.get('HOME') or os.path.expanduser('~')
+USER_CONFIG_DIR = os.environ.get('config_dir', '').strip()
 
-# Ensure config directory exists
-os.makedirs(CONFIG_DIR, exist_ok=True)
+if USER_CONFIG_DIR:
+    # User has configured a custom directory
+    CONFIG_DIR = os.path.expanduser(USER_CONFIG_DIR)
+    CONFIG_FILE = os.path.join(CONFIG_DIR, "port-roulette-config.json")
+else:
+    # Use fallback location in home directory
+    CONFIG_FILE = os.path.join(HOME_DIR, '.port-roulette-config.json')
+
+# Always have a fallback
+FALLBACK_CONFIG_FILE = os.path.join(HOME_DIR, '.port-roulette-config.json')
 
 # Well-known ports to avoid (System Ports 0-1023 and common application ports)
 WELL_KNOWN_PORTS = {
@@ -125,20 +132,45 @@ WELL_KNOWN_PORTS = {
     49152, 49153, 49154, 49155, 49156, 49157, 49158, 49159,  # Windows ephemeral start
 }
 
+def get_config_file():
+    """Get the config file path, preferring user configuration but falling back if needed"""
+    if USER_CONFIG_DIR:
+        try:
+            # User has configured a custom directory - try to use it
+            config_dir = os.path.dirname(CONFIG_FILE)
+            os.makedirs(config_dir, exist_ok=True)
+            # Test if we can write to it
+            test_file = os.path.join(config_dir, '.test')
+            with open(test_file, 'w') as f:
+                f.write('test')
+            os.remove(test_file)
+            return CONFIG_FILE
+        except (OSError, IOError):
+            # Custom directory failed, fall back
+            pass
+
+    # Use fallback location
+    return FALLBACK_CONFIG_FILE
+
 def load_config():
     """Load configuration from file"""
-    if os.path.exists(CONFIG_FILE):
+    config_file = get_config_file()
+
+    if os.path.exists(config_file):
         try:
-            with open(CONFIG_FILE, 'r') as f:
+            with open(config_file, 'r') as f:
                 return json.load(f)
         except (json.JSONDecodeError, IOError):
             pass
+
     return {"projects": {}, "used_ports": []}
 
 def save_config(config):
     """Save configuration to file"""
+    config_file = get_config_file()
+
     try:
-        with open(CONFIG_FILE, 'w') as f:
+        with open(config_file, 'w') as f:
             json.dump(config, f, indent=2)
     except IOError:
         pass
@@ -239,10 +271,30 @@ def main():
         )))
         return
 
-    config = load_config()
+    # Handle debug command
+    if project_name.lower() == "debug":
+        try:
+            home = os.environ.get('HOME', 'NOT_SET')
+            user_config = os.environ.get('config_dir', 'NOT_SET')
+            current_config_file = get_config_file()
+            config_exists = os.path.exists(current_config_file)
+            print(json.dumps(alfred_output(
+                "Debug Info",
+                f"HOME: {home}, UserConfig: {user_config}, Using: {current_config_file}, Exists: {config_exists}",
+                "debug"
+            )))
+        except Exception as e:
+            print(json.dumps(alfred_output("Debug Error", str(e))))
+        return
+
+    try:
+        config = load_config()
+    except Exception as e:
+        print(json.dumps(alfred_output("Config Error", f"Failed to load config: {str(e)}")))
+        return
 
     # Check if project already has a port
-    if project_name in config["projects"]:
+    if project_name in config.get("projects", {}):
         existing_port = config["projects"][project_name]
         print(json.dumps(alfred_output(
             f"Port {existing_port}",
@@ -264,10 +316,8 @@ def main():
         print(json.dumps(alfred_output("Error", "Could not find a valid port")))
         return
 
-    # Save the new port
-    config["projects"][project_name] = port
-    config["used_ports"].append(port)
-    save_config(config)
+    # Don't save the port yet - only save when actually selected
+    # Pass the project name and port in the arg so we can save it later
 
     # Prepare output
     subtitle = f"New port for '{project_name}'"
@@ -277,7 +327,7 @@ def main():
     print(json.dumps(alfred_output(
         f"Port {port}",
         subtitle,
-        str(port)
+        f"save:{project_name}:{port}"
     )))
 
 if __name__ == "__main__":
