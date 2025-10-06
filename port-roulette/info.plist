@@ -41,6 +41,8 @@
 	<string>Generate unique port numbers for development projects. Avoids well-known ports and remembers previously assigned ports.</string>
 	<key>disabled</key>
 	<false/>
+	<key>minAlfredVersion</key>
+	<string>5.0</string>
 	<key>name</key>
 	<string>Port Roulette</string>
 	<key>objects</key>
@@ -90,7 +92,7 @@
 			<key>uid</key>
 			<string>B8F8F8F8-B8F8-B8F8-B8F8-B8F8F8F8F8F8</string>
 			<key>version</key>
-			<integer>3</integer>
+			<integer>5</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -113,7 +115,7 @@
 			<key>uid</key>
 			<string>D0F0F0F0-D0F0-D0F0-D0F0-D0F0F0F0F0F0</string>
 			<key>version</key>
-			<integer>3</integer>
+			<integer>5</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -132,7 +134,7 @@
 			<key>uid</key>
 			<string>C9F9F9F9-C9F9-C9F9-C9F9-C9F9F9F9F9F9</string>
 			<key>version</key>
-			<integer>3</integer>
+			<integer>5</integer>
 		</dict>
 	</array>
 	<key>readme</key>

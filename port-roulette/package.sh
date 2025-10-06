@@ -7,7 +7,7 @@ set -e  # Exit on any error
 
 # Configuration
 WORKFLOW_NAME="port-roulette"
-REQUIRED_FILES=("port-roulette.py" "info.plist")
+REQUIRED_FILES=("port-roulette.py" "save-port.py" "info.plist")
 OPTIONAL_FILES=("icon.png" "README.md")
 
 # Colors for output

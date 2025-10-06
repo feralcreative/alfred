@@ -88,7 +88,7 @@ All IANA-assigned well-known ports including HTTP (80), HTTPS (443), SSH (22), F
 
 ## Requirements
 
-- Alfred 4+ with Powerpack
+- Alfred 5+ with Powerpack
 - Python 3.x
 - macOS
 
