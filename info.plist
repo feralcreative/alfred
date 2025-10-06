@@ -12,6 +12,19 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
+				<string>D0F0F0F0-D0F0-D0F0-D0F0-D0F0F0F0F0F0</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>D0F0F0F0-D0F0-D0F0-D0F0-D0F0F0F0F0F0</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
 				<string>C9F9F9F9-C9F9-C9F9-C9F9-C9F9F9F9F9F9</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -82,6 +95,29 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>/usr/bin/python3 save-port.py "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>D0F0F0F0-D0F0-D0F0-D0F0-D0F0F0F0F0F0</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>autopaste</key>
 				<false/>
 				<key>clipboardtext</key>
@@ -113,7 +149,7 @@ Features:
 - Automatically finds alternative ports if conflicts occur
 - Copies the port number to clipboard when selected
 
-The workflow maintains a configuration file at ~/.port-roulette-config.json to track assigned ports.</string>
+The workflow maintains a configuration file to track assigned ports. Use 'port reset' to clear all assignments.</string>
 	<key>uidata</key>
 	<dict>
 		<key>B8F8F8F8-B8F8-B8F8-B8F8-B8F8F8F8F8F8</key>
@@ -126,15 +162,44 @@ The workflow maintains a configuration file at ~/.port-roulette-config.json to t
 		<key>C9F9F9F9-C9F9-C9F9-C9F9-C9F9F9F9F9F9</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<integer>400</integer>
+			<key>ypos</key>
+			<integer>100</integer>
+		</dict>
+		<key>D0F0F0F0-D0F0-D0F0-D0F0-D0F0F0F0F0F0</key>
+		<dict>
+			<key>xpos</key>
+			<integer>250</integer>
 			<key>ypos</key>
 			<integer>100</integer>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
-	<array/>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>~/www/_vscode</string>
+				<key>placeholder</key>
+				<string>~/www/_vscode</string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Directory where the port configuration file will be stored. Leave empty to use ~/.port-roulette-config.json</string>
+			<key>label</key>
+			<string>Config Directory</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>config_dir</string>
+		</dict>
+	</array>
 	<key>version</key>
-	<string>1.0.0</string>
+	<string>1.1.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/feralcreative/alfred</string>
 </dict>
