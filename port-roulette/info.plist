@@ -12,6 +12,19 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
+				<string>D0F0F0F0-D0F0-D0F0-D0F0-D0F0F0F0F0F0</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>D0F0F0F0-D0F0-D0F0-D0F0-D0F0F0F0F0F0</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
 				<string>C9F9F9F9-C9F9-C9F9-C9F9-C9F9F9F9F9F9</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -48,11 +61,11 @@
 				<key>keyword</key>
 				<string>port</string>
 				<key>queuedelaycustom</key>
-				<integer>3</integer>
+				<integer>1</integer>
 				<key>queuedelayimmediatelyinitially</key>
-				<true/>
+				<false/>
 				<key>queuedelaymode</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>queuemaxsize</key>
 				<integer>1</integer>
 				<key>runningsubtext</key>
@@ -82,21 +95,48 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>autopaste</key>
+				<key>concurrently</key>
 				<false/>
-				<key>clipboardtext</key>
-				<string>{query}</string>
-				<key>ignoredynamicplaceholders</key>
-				<false/>
-				<key>transient</key>
-				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>/usr/bin/python3 save-port.py "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.output.clipboard</string>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>D0F0F0F0-D0F0-D0F0-D0F0-D0F0F0F0F0F0</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>/usr/bin/python3 extract-port.py "$1" | pbcopy</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
 			<string>C9F9F9F9-C9F9-C9F9-C9F9-C9F9F9F9F9F9</string>
 			<key>version</key>
-			<integer>3</integer>
+			<integer>2</integer>
 		</dict>
 	</array>
 	<key>readme</key>
@@ -123,16 +163,45 @@ The workflow maintains a configuration file at ~/.port-roulette-config.json to t
 			<key>ypos</key>
 			<integer>100</integer>
 		</dict>
+		<key>D0F0F0F0-D0F0-D0F0-D0F0-D0F0F0F0F0F0</key>
+		<dict>
+			<key>xpos</key>
+			<integer>250</integer>
+			<key>ypos</key>
+			<integer>100</integer>
+		</dict>
 		<key>C9F9F9F9-C9F9-C9F9-C9F9-C9F9F9F9F9F9</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<integer>400</integer>
 			<key>ypos</key>
 			<integer>100</integer>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
-	<array/>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string>~/Documents/port-roulette</string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Directory where port configuration will be stored (leave empty for default ~/.port-roulette-config.json)</string>
+			<key>label</key>
+			<string>Config Directory</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>config_dir</string>
+		</dict>
+	</array>
 	<key>version</key>
 	<string>1.0.0</string>
 	<key>webaddress</key>

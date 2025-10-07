@@ -278,13 +278,42 @@ def main():
             user_config = os.environ.get('config_dir', 'NOT_SET')
             current_config_file = get_config_file()
             config_exists = os.path.exists(current_config_file)
+
+            # Load config to show project count
+            config = load_config()
+            project_count = len(config.get("projects", {}))
+
             print(json.dumps(alfred_output(
-                "Debug Info",
-                f"HOME: {home}, UserConfig: {user_config}, Using: {current_config_file}, Exists: {config_exists}",
-                "debug"
+                f"Config: {current_config_file}",
+                f"Exists: {config_exists}, Projects: {project_count}, HOME: {home}",
+                current_config_file
             )))
         except Exception as e:
             print(json.dumps(alfred_output("Debug Error", str(e))))
+        return
+
+    # Handle config command - show config file location
+    if project_name.lower() == "config":
+        try:
+            current_config_file = get_config_file()
+            config_exists = os.path.exists(current_config_file)
+
+            if config_exists:
+                config = load_config()
+                project_count = len(config.get("projects", {}))
+                print(json.dumps(alfred_output(
+                    f"Config File Found",
+                    f"{current_config_file} ({project_count} projects)",
+                    current_config_file
+                )))
+            else:
+                print(json.dumps(alfred_output(
+                    f"Config File Missing",
+                    f"Will be created at: {current_config_file}",
+                    current_config_file
+                )))
+        except Exception as e:
+            print(json.dumps(alfred_output("Config Error", str(e))))
         return
 
     try:
@@ -297,8 +326,8 @@ def main():
     if project_name in config.get("projects", {}):
         existing_port = config["projects"][project_name]
         print(json.dumps(alfred_output(
-            f"Port {existing_port}",
-            f"Existing port for '{project_name}'",
+            f"🔒 Port {existing_port}",
+            f"⚠️ Port number {existing_port} already used for '{project_name}' - Press Enter to copy",
             str(existing_port)
         )))
         return

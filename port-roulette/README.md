@@ -37,12 +37,23 @@ port pge          # Generates port for "pge" project (likely 1675: p=16, g=7, e=
 port myapp        # Generates port for "myapp" project
 port frontend     # Generates port for "frontend" project
 port reset        # Reset the port database to default state
+port config       # Show config file location and status
+port debug        # Show detailed debug information
 ```
 
 ### First Time vs. Subsequent Calls
 
-- **First time**: Calculates new port based on project name, saves to config
+- **First time**: Calculates new port based on project name, saves to config when you select the result
 - **Subsequent times**: Returns the same port number that was previously assigned
+
+### Improved Behavior
+
+The workflow now only saves port assignments when you actually select a result, not while you're typing. This means:
+
+- Type `port wiki` and the workflow will show the calculated port for "wiki"
+- The port is only saved to the config file when you press Enter or click the result
+- No more unwanted partial saves for "w", "wi", "wik" while typing
+- Clean, intentional port assignments only
 
 ## How It Works
 
@@ -101,9 +112,22 @@ All IANA-assigned well-known ports including HTTP (80), HTTPS (443), SSH (22), F
 
 ### Configuration Issues
 
-- The config file is stored at `~/www/_vscode/port-roulette-config.json` by default
+- **Can't find config file?** Use `port config` to see the exact file location
 - Use `port reset` command to reset all port assignments
 - Ensure write permissions to the config directory
+- Use `port debug` command to check configuration paths and status
+
+### Finding Your Config File
+
+The config file is named `.port-roulette-config.json` (note the dot prefix) and is typically located in your home directory:
+
+```bash
+port config       # Shows exact location and status
+```
+
+**Default location**: `~/.port-roulette-config.json`
+
+**File name to search for**: `port-roulette-config.json` or `.port-roulette-config.json`
 
 ## Configuration
 
@@ -111,23 +135,27 @@ All IANA-assigned well-known ports including HTTP (80), HTTPS (443), SSH (22), F
 
 The workflow stores port assignments in a JSON configuration file. By default, this is located at:
 
-```
-~/www/_vscode/port-roulette-config.json
+```bash
+~/.port-roulette-config.json
 ```
 
 ### Customizing Config Location
 
-To change the config file location, edit the `CONFIG_DIR` variable in `port-roulette.py`:
+You can now customize the config directory through Alfred's workflow configuration:
 
-```python
-# Configuration file path - can be customized by changing this line
-# Default: ~/www/_vscode/port-roulette-config.json
-# Alternative: ~/.port-roulette-config.json (original location)
-CONFIG_DIR = os.path.expanduser("~/www/_vscode")
-```
+1. Open Alfred Preferences
+2. Go to Workflows
+3. Select "Port Roulette"
+4. Click the "Configure workflow and variables" button (gear icon)
+5. Set the "Config Directory" field to your preferred location (e.g., `~/Documents/port-roulette`)
+
+If you specify a custom directory, the config file will be saved as `port-roulette-config.json` in that directory. If you leave it empty, it will use the default location `~/.port-roulette-config.json`.
 
 Common alternatives:
-- `~/.port-roulette-config.json` (original location)
+
+- `~/Documents/port-roulette/port-roulette-config.json`
+- `~/Dropbox/config/port-roulette-config.json`
+- `~/.config/port-roulette-config.json`
 - `~/.config/port-roulette/config.json`
 - `~/Documents/port-roulette-config.json`
 
@@ -140,6 +168,7 @@ port reset
 ```
 
 This will:
+
 - Clear all project-to-port mappings
 - Reset the used ports list
 - Restore the database to its default empty state
