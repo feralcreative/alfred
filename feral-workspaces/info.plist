@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>dev.feralcreative.workspace</string>
+	<key>connections</key>
+	<dict>
+		<key>65C22C75-122B-49B9-B09F-2A8790C2104C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>A8E3E34A-3C7F-4128-9BAF-E2B17D4A5EDD</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Ziad Ezzat</string>
+	<key>description</key>
+	<string>Open a Development Workspace</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Feral Workspaces</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>dev</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Hold your fucking horses</string>
+				<key>script</key>
+				<string>#!/usr/bin/env python3
+
+"""
+@file feral-workspaces.py
+@version 00.08
+@author @feralcreative
+@lastModified 2025.04.05.0948
+@description Alfred workflow script filter for VS Code workspaces
+  1. This script is an Alfred workflow script filter that lists VS Code workspace files.
+  2. When a file is selected, its full path is passed as an argument to open in VS Code.
+  3. Uses os.path.expanduser to reference the home directory.
+  4. Filters out unwanted system files like .DS_Store.
+  5. Strips '.code-workspace' extension in the display title.
+  6. Shows the filename in the subtitle.
+  7. Uses custom icons from the icons subfolder matching the workspace name.
+"""
+
+import os
+import sys
+import json
+
+def fuzzy_match(query, text):
+    query = query.lower()
+    text = text.lower()
+    
+    if not query:
+        return True
+        
+    idx = 0
+    for char in query:
+        idx = text.find(char, idx)
+        if idx == -1:
+            return False
+        idx += 1
+    return True
+
+def main():
+    # Get search query from Alfred - handle empty input properly
+    # This will handle when a user types just the command or adds a space after
+    query = ""
+    if len(sys.argv) &gt; 1:
+        query = sys.argv[1].strip()
+    
+    # Building the path using os.path.expanduser to ensure the home directory is properly referenced
+    home_dir = os.path.expanduser("~")
+    search_dir = os.path.join(home_dir, "www", "_vscode", "workspaces")
+    icons_dir = os.path.join(search_dir, "icons")
+    items = []
+    
+    # Files to exclude from results
+    excluded_files = ['.DS_Store', '.localized', '.gitkeep', 'Thumbs.db']
+    
+    try:
+        files = os.listdir(search_dir)
+    except Exception as e:
+        items.append({
+            "title": "Error reading directory",
+            "subtitle": str(e),
+            "valid": "false"
+        })
+        print(json.dumps({"items": items}))
+        sys.exit(1)
+    
+    matching_items = []
+    for filename in sorted(files):
+        # Skip excluded files and the icons directory
+        if filename in excluded_files or filename == "icons":
+            continue
+            
+        fullpath = os.path.join(search_dir, filename)
+        if os.path.isfile(fullpath) and filename.endswith('.code-workspace'):
+            # Strip .code-workspace extension
+            display_name = filename[:-15]
+            
+            # Always add workspaces if query is empty, otherwise apply fuzzy matching
+            if not query or fuzzy_match(query, display_name):
+                icon_name = display_name.lower().replace(" ", "")
+                icon_path = os.path.join(icons_dir, f"icon-{icon_name}.png")
+                
+                if not os.path.exists(icon_path):
+                    icon_path = "icon.png"
+                
+                matching_items.append({
+                    "title": display_name,
+                    "subtitle": filename,
+                    "arg": fullpath,
+                    "icon": {"path": icon_path}
+                })
+    
+    if not matching_items:
+        matching_items.append({
+            "title": "No matching workspaces found",
+            "subtitle": f"No workspace matches '{query}'",
+            "valid": "false"
+        })
+        
+    print(json.dumps({"items": matching_items}))
+
+if __name__ == '__main__':
+    main()</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>Open Code Workspace</string>
+				<key>title</key>
+				<string>.code-workspace</string>
+				<key>type</key>
+				<integer>9</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>65C22C75-122B-49B9-B09F-2A8790C2104C</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>openwith</key>
+				<string></string>
+				<key>sourcefile</key>
+				<string>{query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openfile</string>
+			<key>uid</key>
+			<string>A8E3E34A-3C7F-4128-9BAF-E2B17D4A5EDD</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>65C22C75-122B-49B9-B09F-2A8790C2104C</key>
+		<dict>
+			<key>xpos</key>
+			<real>220</real>
+			<key>ypos</key>
+			<real>420</real>
+		</dict>
+		<key>A8E3E34A-3C7F-4128-9BAF-E2B17D4A5EDD</key>
+		<dict>
+			<key>xpos</key>
+			<real>465</real>
+			<key>ypos</key>
+			<real>420</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.0</string>
+	<key>webaddress</key>
+	<string>feralcreative.dev</string>
+</dict>
+</plist>
