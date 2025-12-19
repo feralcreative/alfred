@@ -1,0 +1,7 @@
+keyword,name,url,description
+cu,Open Clickup Dashboard,https://app.clickup.com/9014243918/dashboards/8cmmwje-13934,ClickUp project management
+nas,Feral Creative NAS,https://nas.feralcreative.co,NAS web interface
+cloud,Cloudflare Account,https://dash.cloudflare.com/,Cloudflare dashboard
+sonarr,Load Sonarr,http://feralcreative.synology.me:8989,Sonarr TV management
+radarr,Load Radarr,http://feralcreative.synology.me:7878,Radarr movie management
+sabnzbd,Load SABnzbd,http://feralcreative.synology.me:8080,SABnzbd download management
