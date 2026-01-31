@@ -8,28 +8,67 @@ import csv
 import os
 import uuid
 import plistlib
+import re
 from datetime import datetime
+
+def get_current_version():
+    """Read current version from existing info.plist, or return default"""
+    if os.path.exists('info.plist'):
+        try:
+            with open('info.plist', 'r', encoding='utf-8') as f:
+                content = f.read()
+                # Find the main workflow version (after variablesdontexport)
+                match = re.search(r'<key>variablesdontexport</key>.*?<key>version</key>\s*<string>([^<]+)</string>', content, re.DOTALL)
+                if match:
+                    return match.group(1)
+        except Exception as e:
+            print(f"Warning: Could not read current version: {e}")
+    return '2.0'  # Default version
+
+def increment_version(current_version, major_update=False):
+    """Increment version number"""
+    try:
+        version_float = float(current_version)
+        if major_update:
+            # Round up to next tenth
+            major_part = int(version_float)
+            minor_part = int((version_float - major_part) * 100)
+            if minor_part == 0:
+                new_version = f"{major_part}.1"
+            else:
+                new_minor = ((minor_part // 10) + 1) * 10
+                if new_minor >= 100:
+                    new_version = f"{major_part + 1}.0"
+                else:
+                    new_version = f"{major_part}.{new_minor}"
+        else:
+            # Increment by 0.01
+            new_version = f"{version_float + 0.01:.2f}"
+        return new_version
+    except ValueError:
+        print(f"Warning: Invalid version format '{current_version}', using default increment")
+        return "2.01"
 
 def read_csv_shortcuts(csv_file):
     """Read shortcuts from a CSV file"""
     shortcuts = []
     if not os.path.exists(csv_file):
         return shortcuts
-    
+
     with open(csv_file, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
             shortcuts.append(row)
-    
+
     return shortcuts
 
 def get_icon_path(keyword):
     """Get custom icon path if it exists, otherwise return None"""
-    # Check for PNG, JPG, or SVG
-    for ext in ['png', 'jpg', 'jpeg', 'svg']:
-        icon_path = f'icons/{keyword}.{ext}'
-        if os.path.exists(icon_path):
-            return {'path': icon_path}
+    # Check for PNG only
+    icon_path = f'icons/{keyword}.png'
+    if os.path.exists(icon_path):
+        # Return relative path for Alfred (relative to workflow directory)
+        return {'path': icon_path}
     return None
 
 def create_keyword_object(keyword, name, subtext="", icon_path=None):
@@ -122,7 +161,57 @@ def create_paste_action():
         'version': 1
     }
 
-def build_workflow():
+def create_script_filter_object(keyword, name, subtext, script_content, icon_path=None):
+    """Create a script filter object"""
+    config = {
+        'alfredfiltersresults': False,
+        'alfredfiltersresultsmatchmode': 0,
+        'argumenttreatemptyqueryasnil': True,
+        'argumenttrimmode': 0,
+        'argumenttype': 1,  # Optional argument
+        'escaping': 102,
+        'keyword': keyword or '',
+        'queuedelaycustom': 3,
+        'queuedelayimmediatelyinitially': True,
+        'queuedelaymode': 0,
+        'queuemode': 1,
+        'runningsubtext': 'Searching...',
+        'script': script_content,
+        'scriptargtype': 1,
+        'scriptfile': '',
+        'subtext': subtext or '',
+        'title': name or '',
+        'type': 0,  # Bash script
+        'withspace': True
+    }
+
+    obj = {
+        'config': config,
+        'type': 'alfred.workflow.input.scriptfilter',
+        'uid': str(uuid.uuid4()).upper(),
+        'version': 3
+    }
+
+    # Add custom icon if provided
+    if icon_path:
+        obj['config']['icon'] = icon_path
+
+    return obj
+
+def create_open_file_action():
+    """Create an action to open a file"""
+    return {
+        'config': {
+            'acceptsmulti': False,
+            'filetypes': [],
+            'name': 'Open'
+        },
+        'type': 'alfred.workflow.action.openfile',
+        'uid': str(uuid.uuid4()).upper(),
+        'version': 3
+    }
+
+def build_workflow(new_version='2.0'):
     """Build the complete workflow plist"""
     
     # Read all shortcuts
@@ -263,6 +352,28 @@ def build_workflow():
     uidata[version_paste['uid']] = {'xpos': float(x_action + 180), 'ypos': float(y_position)}
     y_position += y_spacing
 
+    # Add utility: fe (file search in _FERAL directory)
+    fe_icon = get_icon_path('fe')
+    # Use bash wrapper to call Python script
+    fe_script_content = '/usr/bin/python3 ./utilities/feral-search.py "$1"'
+    feral_filter = create_script_filter_object(
+        'fe',
+        'Search _FERAL',
+        'Search files in _FERAL directory',
+        fe_script_content,
+        fe_icon
+    )
+    feral_open = create_open_file_action()
+
+    objects.append(feral_filter)
+    objects.append(feral_open)
+    connections[feral_filter['uid']] = [
+        create_connection(feral_filter['uid'], feral_open['uid'])
+    ]
+    uidata[feral_filter['uid']] = {'xpos': float(x_input), 'ypos': float(y_position)}
+    uidata[feral_open['uid']] = {'xpos': float(x_action), 'ypos': float(y_position)}
+    y_position += y_spacing
+
     # Build the complete plist structure
     readme_text = """# Feral Keywords - CSV-Driven Workflow
 
@@ -285,7 +396,7 @@ This workflow is now CSV-driven for easy maintenance.
 Files: scans, wtf, screenshots, ndr, www
 Web: cu, nas, cloud, sonarr
 Apps: faf
-Utils: gclear, >>
+Utils: gclear, >>, fe
 
 See README.md for full documentation.
 """
@@ -303,7 +414,7 @@ See README.md for full documentation.
         'uidata': uidata,
         'userconfigurationconfig': [],
         'variablesdontexport': [],
-        'version': '2.0',
+        'version': new_version,
         'webaddress': 'http://feralcreative.co'
     }
 
@@ -311,10 +422,21 @@ See README.md for full documentation.
 
 def main():
     """Main build function"""
+    import sys
+
+    # Check for major update flag
+    major_update = '--major' in sys.argv
+
     print("Building Feral Keywords workflow from CSV files...")
 
-    # Build the workflow
-    plist = build_workflow()
+    # Get current version and increment it
+    current_version = get_current_version()
+    new_version = increment_version(current_version, major_update)
+
+    print(f"Version: {current_version} → {new_version}" + (" (major)" if major_update else " (minor)"))
+
+    # Build the workflow with new version
+    plist = build_workflow(new_version)
 
     # Write to info.plist
     with open('info.plist.new', 'wb') as f:

@@ -136,9 +136,11 @@ def main():
             if not query or fuzzy_match(query, display_name):
                 icon_name = display_name.lower().replace(" ", "")
                 icon_path = os.path.join(icons_dir, f"icon-{icon_name}.png")
-                
+
                 if not os.path.exists(icon_path):
-                    icon_path = "icon.png"
+                    # Use absolute path to workflow's default icon
+                    # In Alfred context, use the current working directory
+                    icon_path = os.path.abspath("icon.png")
                 
                 matching_items.append({
                     "title": display_name,
@@ -218,7 +220,7 @@ if __name__ == '__main__':
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>1.0</string>
+	<string>1.11</string>
 	<key>webaddress</key>
 	<string>feralcreative.dev</string>
 </dict>

@@ -15,6 +15,12 @@ alfred/
 ├── README.md                    # Main documentation
 ├── _AI_AGENT_PRIMER.md         # This file
 ├── .augment/                   # AI agent rules and configuration
+├── _prod/                      # Symlinks to actual Alfred directories (PRODUCTION)
+│   ├── workflows/              # → Alfred.alfredpreferences/workflows
+│   ├── snippets/               # → Alfred.alfredpreferences/snippets
+│   ├── preferences/            # → Alfred.alfredpreferences/preferences
+│   ├── resources/              # → Alfred.alfredpreferences/resources
+│   └── remote/                 # → Alfred.alfredpreferences/remote
 ├── alfred-augment/             # Task management & process tools
 ├── feral-keywords/             # CSV-driven shortcuts (recently refactored)
 ├── feral-workspaces/           # VS Code workspace launcher
@@ -23,6 +29,11 @@ alfred/
 ├── port-roulette/              # Development port generator
 └── sanitize-filenames/         # Filename sanitizer for web use
 ```
+
+**IMPORTANT:** The `_prod/` directory contains symlinks to the actual Alfred preferences directory located at:
+`/Volumes/Feral SSD/Dropbox (Personal)/_FERAL/_assets/settings/alfred/preferences/Alfred.alfredpreferences/`
+
+When making changes to workflows, you must copy files to `_prod/workflows/` for Alfred to see them.
 
 ## 🔧 Technology Stack
 
@@ -142,7 +153,6 @@ alfred/
 Every Alfred workflow is a directory containing:
 
 1. **`info.plist`** (required) - XML configuration with:
-
    - Workflow metadata (name, version, author, description)
    - Objects (triggers, actions, filters)
    - Connections (links between objects)
@@ -233,11 +243,26 @@ Alfred provides environment variables:
 
 ### Modifying Existing Workflows
 
-1. Edit files in workflow directory
+**IMPORTANT:** Changes must be deployed to `_prod/workflows/` to be active in Alfred!
+
+1. Edit files in workflow directory (e.g., `feral-keywords/`)
 2. For plist changes: Edit in Alfred GUI or use Python
-3. Test in Alfred
-4. Re-export `.alfredworkflow` if needed
+3. **Deploy to production:**
+   - Find the workflow UID in `_prod/workflows/`
+   - Copy updated files to `_prod/workflows/user.workflow.{UID}/`
+4. Test in Alfred (Alfred will auto-reload when files change)
 5. Update documentation
+
+**Example: Deploying feral-keywords changes**
+
+```bash
+# Find the workflow UID
+grep -l "Feral Keywords" _prod/workflows/*/info.plist
+
+# Copy updated files
+cp feral-keywords/info.plist _prod/workflows/user.workflow.9BCA3289-84E4-4783-81AF-5A6382B80FB4/
+cp feral-keywords/utilities/*.py _prod/workflows/user.workflow.9BCA3289-84E4-4783-81AF-5A6382B80FB4/utilities/
+```
 
 ### Testing Workflows
 
