@@ -1,7 +1,6 @@
-keyword,name,path,description
-scans,Scans,/Volumes/Feral SSD/Dropbox (Personal)/_Personal/_scans,Personal document scans
-wtf,WTF,/Volumes/Feral SSD/Dropbox (Personal)/wtf,Folder for Storage of Only the Dankest Maymays
-screenshots,Screenshots Folder,/Volumes/Feral SSD/Dropbox (Personal)/Screenshots,Screenshots folder
-ndr,Ned Davis Charts,/Volumes/Feral SSD/Dropbox (Personal)/_FERAL/Westwood/assets/charts/ned-davis-charts,Westwood > assets > charts > ned-davis-charts
-www,WWW Directory,~/www,Development projects directory
-
+keyword,name,path,path2,description
+scans,Scans,/Volumes/Feral SSD/Dropbox (Personal)/_Personal/_scans,~/Library/CloudStorage/Dropbox-Personal/hobbs.ezzat.com/_scans,Personal document scans
+wtf,WTF,/Volumes/Feral SSD/Dropbox (Personal)/wtf,~/Library/CloudStorage/Dropbox-Personal/wtf,Folder for Storage of Only the Dankest Maymays
+screenshots,Screenshots Folder,/Volumes/Feral SSD/Dropbox (Personal)/Screenshots,~/Library/CloudStorage/Dropbox-Personal/Screenshots,Screenshots folder
+ndr,Ned Davis Charts,/Volumes/Feral SSD/Dropbox (Personal)/_FERAL/Westwood/assets/charts/ned-davis-charts,~/Library/CloudStorage/Dropbox-Personal/_FERAL/Westwood/assets/charts/ned-davis-charts,Westwood > assets > charts > ned-davis-charts
+www,WWW Directory,~/www,,Development projects directory

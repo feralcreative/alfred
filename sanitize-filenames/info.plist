@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>co.feralcreative.</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>78BD9646-5BC1-4A93-8AEA-B3C106D1F32B</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C7E53B19-91E7-43CB-AC4B-E55903C4C14E</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>CC8E549A-A317-4688-9D0D-BC706E4E360B</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>EF5FC879-F15B-489B-9AA1-743B6CD86FD5</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Feral Creative</string>
+	<key>description</key>
+	<string>A simple workflow that sanitizes filenames for use on the web.</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Sanitize Filenames</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>sani</string>
+				<key>subtext</key>
+				<string>kebab-case-with-no-special-characters</string>
+				<key>text</key>
+				<string>Sanitize Filenames</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>78BD9646-5BC1-4A93-8AEA-B3C106D1F32B</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>on run
+    try
+        tell application "Finder"
+            -- Get the currently selected files in Finder.
+            set fileList to selection
+
+            -- Loop through each selected file.
+            repeat with aFile in fileList
+                try
+                    set oldName to name of aFile
+                    set newName to my sanitizeFilename(oldName)
+                    set name of aFile to newName
+                on error errMsg number errNum
+                    -- Display an alert if there's an error renaming this file
+                    display alert "Error renaming file" message errMsg
+                end try
+            end repeat
+        end tell
+
+        -- Notify when the process is complete
+        display notification "Filenames have been sanitized." with title "Alfred Workflow"
+    on error errMsg number errNum
+        -- Display a general error alert
+        display alert "General Error" message errMsg
+    end try
+end run
+
+-- Handler to sanitize the filename.
+on sanitizeFilename(fName)
+    -- Convert filename to lowercase.
+    set fName to my toLowerCase(fName)
+
+    -- Remove accents
+    set fName to my removeAccents(fName)
+
+    -- Define a list of special characters you want to remove.
+    set specialChars to {"(", ")", "#", "*", "^", "!", "$", "\\", "|", ",", ":", "%", "?", "\"", "'", "~", "/", "=", ";", "{", "}"}
+
+    -- Loop over each special character and remove it from the filename.
+    repeat with thisChar in specialChars
+        set fName to my replaceText(fName, thisChar, "")
+    end repeat
+
+    -- Replace spaces and underscores with dashes.
+    set fName to my replaceText(fName, " ", "-")
+    set fName to my replaceText(fName, "_", "-")
+    
+    -- Replace "&amp;" with "and".
+    set fName to my replaceText(fName, "&amp;", "and")
+
+    -- Remove duplicate dashes
+    set fName to my replaceText(fName, "-----", "-")
+    set fName to my replaceText(fName, "----", "-")
+    set fName to my replaceText(fName, "---", "-")
+    set fName to my replaceText(fName, "--", "-")
+
+    -- Remove any trailing dashes before the file extension
+    set fName to my replaceText(fName, "-.", ".")
+    set fName to my replaceText(fName, "-@", "@")
+
+    return fName
+end sanitizeFilename
+
+-- Handler to replace text in a string.
+on replaceText(theText, theSearch, theReplacement)
+    -- This function replaces all occurrences of theSearch with the replacement in theText.
+    set AppleScript's text item delimiters to theSearch
+    set theList to every text item of theText
+    set AppleScript's text item delimiters to theReplacement
+    set newText to theList as text
+    set AppleScript's text item delimiters to ""
+    return newText
+end replaceText
+
+-- Handler to convert text to lowercase.
+on toLowerCase(theText)
+    -- This function converts theText to all lowercase letters.
+    -- Uses the 'do shell script' command to leverage the shell's 'tr' command.
+    set theLowerText to do shell script "echo " &amp; quoted form of theText &amp; " | tr '[:upper:]' '[:lower:]'"
+    return theLowerText
+end toLowerCase
+
+-- Handler to remove accents from characters.
+on removeAccents(theText)
+    set accentedChars to "áàâãäåçéèêëíìîïñóòôõöúùûüýÿ"
+    set unaccentedChars to "aaaaaaceeeeiiiinooooouuuuyy"
+	
+    set newText to ""
+    repeat with i from 1 to (length of theText)
+        set thisChar to character i of theText
+        set accentIndex to offset of thisChar in accentedChars
+        if accentIndex is not 0 then
+            set thisChar to character accentIndex of unaccentedChars
+        end if
+        set newText to newText &amp; thisChar
+    end repeat
+    return newText
+end removeAccents</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>6</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>C7E53B19-91E7-43CB-AC4B-E55903C4C14E</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>mess</string>
+				<key>subtext</key>
+				<string></string>
+				<key>text</key>
+				<string>Create Messy Files</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>CC8E549A-A317-4688-9D0D-BC706E4E360B</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>on run
+    try
+        -- Get the current working directory in Finder using do shell script to get the front window path.
+        set currentDirectory to (do shell script "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of window 1 as alias)'")
+
+        -- Define possible suffixes
+        set suffixes to {"@2x", "@3x", "@4x", "@100px", "@1920x1080", "@512w"}
+        
+        -- Create 40 text files in the current directory.
+        set filenamesWithSuffix to {}
+        
+        repeat 40 times
+            -- Generate a random filename using words
+            set randomName to my generateRandomWordName()
+            
+            -- Determine if a suffix should be added
+            if (count filenamesWithSuffix) &lt; 6 then
+                if (random number 1) &gt; 0.85 then
+                    -- Append a suffix to this file name
+                    set suffix to some item of suffixes
+                    set randomName to randomName &amp; suffix
+                    set end of filenamesWithSuffix to randomName
+                end if
+            end if
+
+            -- Set the path for the new file
+            set newFilePosix to currentDirectory &amp; randomName &amp; ".txt"
+            
+            -- Create and write to the new text file
+            do shell script "echo 'test' &gt; " &amp; quoted form of newFilePosix
+        end repeat
+    
+        -- Ensure all suffixes are used if not naturally selected
+        repeat with remainingSuffix in suffixes
+            if (count filenamesWithSuffix) &lt; 6 then
+                -- Generate another filename for the remaining suffix
+                set randomName to my generateRandomWordName() &amp; remainingSuffix
+                set newFilePosix to currentDirectory &amp; randomName &amp; ".txt"
+                do shell script "echo 'test' &gt; " &amp; quoted form of newFilePosix
+                set end of filenamesWithSuffix to randomName
+            end if
+        end repeat
+    
+        display notification "40 text files have been created." with title "File Creation Complete"
+    on error errMsg number errNum
+        display alert "Error" message errMsg
+    end try
+end run
+
+-- Helper function to generate a random name using random words.
+on generateRandomWordName()
+    -- Define a list of random words.
+    set wordList to {"apple", "banana", "orange", "grape", "pear", "peach", "melon", "berry", "mango", "kiwi"}
+    -- Extend the word list to at least 500 words for more variation.
+
+    set numberOfWords to 5 -- Number of words per filename
+    set randomName to ""
+    
+    -- Loop to generate a random name by combining random words.
+    repeat numberOfWords times
+        -- Pick a random word from the word list
+        set randomWord to some item of wordList
+        
+        -- Randomize case styles: uppercase or alternating caps
+        if (random number 1) &gt; 0.5 then
+            set randomWord to my randomizeCase(randomWord) -- Alternating caps
+        else
+            set randomWord to my allUpperCase(randomWord) -- All uppercase
+        end if
+
+        -- Add random accents
+        set randomWord to my addRandomAccents(randomWord)
+
+        -- Add separators including doubled or tripled spaces and underscores
+        set separatorPool to {" ", "  ", "   ", "_", "__", "___"}
+        set randomSeparator to some item of separatorPool
+
+        -- Append the constructed part to build the filename
+        set randomName to randomName &amp; randomWord &amp; randomSeparator
+    end repeat
+    
+    -- Remove trailing separator
+    set trailingSeparators to {" ", "_"}
+    repeat with sep in trailingSeparators
+        if randomName ends with sep or randomName ends with (sep &amp; sep) or randomName ends with (sep &amp; sep &amp; sep) then
+            set randomName to text 1 through -(1 + (count sep)) of randomName
+        end if
+    end repeat
+    
+    return randomName
+end generateRandomWordName
+
+-- Helper function to convert a word to all uppercase.
+on allUpperCase(inputWord)
+    return do shell script "echo " &amp; quoted form of inputWord &amp; " | tr '[:lower:]' '[:upper:]'"
+end allUpperCase
+
+-- Helper function to randomize the case of each letter in a word (Alternating Caps).
+on randomizeCase(inputWord)
+    set randomizedWord to ""
+    repeat with i from 1 to (length of inputWord)
+        set thisChar to character i of inputWord
+        if (i mod 2) is equal to 0 then
+            set randomizedWord to randomizedWord &amp; (do shell script "echo " &amp; quoted form of thisChar &amp; " | tr '[:lower:]' '[:upper:]'")
+        else
+            set randomizedWord to randomizedWord &amp; (do shell script "echo " &amp; quoted form of thisChar &amp; " | tr '[:upper:]' '[:lower:]'")
+        end if
+    end repeat
+    return randomizedWord
+end randomizeCase
+
+-- Helper function to add random accents to like characters.
+on addRandomAccents(inputWord)
+    set accentedMap to {¬
+        {"a", "á", "à", "â", "ã", "ä"}, ¬
+        {"e", "é", "è", "ê", "ë"}, ¬
+        {"i", "í", "ì", "î", "ï"}, ¬
+        {"o", "ó", "ò", "ô", "õ", "ö"}, ¬
+        {"u", "ú", "ù", "û", "ü"}, ¬
+        {"A", "Á", "À", "Â", "Ã", "Ä"}, ¬
+        {"E", "É", "È", "Ê", "Ë"}, ¬
+        {"I", "Í", "Ì", "Î", "Ï"}, ¬
+        {"O", "Ó", "Ò", "Ô", "Õ", "Ö"}, ¬
+        {"U", "Ú", "Ù", "Û", "Ü"}}
+    
+    set accentedWord to ""
+    repeat with i from 1 to (length of inputWord)
+        set thisChar to character i of inputWord
+        set newChar to thisChar
+        
+        repeat with accentList in accentedMap
+            set baseChar to item 1 of accentList
+            if thisChar is equal to baseChar then
+                if (random number 1) &gt; 0.7 then
+                    set newChar to some item of accentList
+                end if
+                exit repeat
+            end if
+        end repeat
+        
+        set accentedWord to accentedWord &amp; newChar
+    end repeat
+    return accentedWord
+end addRandomAccents</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>6</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>EF5FC879-F15B-489B-9AA1-743B6CD86FD5</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>This workflow calls a very simple applescript that sanitizes your filenames for web use by removing special characters and converting to [kebab-case](https://feral.ly/kebab-case).
+
+The script makes the following changes to your selected files:
+* Converts filenames to lowercase
+* Removes special characters from filenames: 
+  `\ * { } ^ : , $ ! = # ( ) % ? " ' ; / \ [ ] ~ |`
+* Replaces "&amp;" with "and"
+* Replace spaces and underscores with dashes</string>
+	<key>uidata</key>
+	<dict>
+		<key>78BD9646-5BC1-4A93-8AEA-B3C106D1F32B</key>
+		<dict>
+			<key>xpos</key>
+			<real>320</real>
+			<key>ypos</key>
+			<real>225</real>
+		</dict>
+		<key>C7E53B19-91E7-43CB-AC4B-E55903C4C14E</key>
+		<dict>
+			<key>xpos</key>
+			<real>515</real>
+			<key>ypos</key>
+			<real>225</real>
+		</dict>
+		<key>CC8E549A-A317-4688-9D0D-BC706E4E360B</key>
+		<dict>
+			<key>xpos</key>
+			<real>320</real>
+			<key>ypos</key>
+			<real>370</real>
+		</dict>
+		<key>EF5FC879-F15B-489B-9AA1-743B6CD86FD5</key>
+		<dict>
+			<key>xpos</key>
+			<real>515</real>
+			<key>ypos</key>
+			<real>370</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.0.2</string>
+	<key>webaddress</key>
+	<string>https://feralcreative.co</string>
+</dict>
+</plist>

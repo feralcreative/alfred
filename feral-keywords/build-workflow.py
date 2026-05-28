@@ -98,7 +98,7 @@ def create_open_url_object(url):
     """Create an open URL action object"""
     return {
         'config': {
-            'browser': '',
+            'browser': 'at.obdev.Choosy',
             'skipqueryencode': False,
             'skipvarencode': False,
             'spaces': '',
@@ -120,6 +120,30 @@ def create_launch_file_object(path):
         'uid': str(uuid.uuid4()).upper(),
         'version': 1
     }
+
+def create_smart_path_script(path1, path2=None):
+    """Create a bash script that opens the first existing path"""
+    if not path2:
+        # If no second path, just use the simple launch file object
+        return None
+
+    script = f'''# Check which path exists and open it
+path1="{path1}"
+path2="{path2}"
+
+# Expand tilde in paths
+path1="${{path1/#\\~/$HOME}}"
+path2="${{path2/#\\~/$HOME}}"
+
+if [ -e "$path1" ]; then
+    open "$path1"
+elif [ -e "$path2" ]; then
+    open "$path2"
+else
+    osascript -e 'display notification "Neither path exists" with title "Path Not Found"'
+fi
+'''
+    return script
 
 def create_connection(source_uid, dest_uid):
     """Create a connection between two objects"""
@@ -164,7 +188,7 @@ def create_paste_action():
 def create_script_filter_object(keyword, name, subtext, script_content, icon_path=None):
     """Create a script filter object"""
     config = {
-        'alfredfiltersresults': False,
+        'alfredfiltersresults': True,
         'alfredfiltersresultsmatchmode': 0,
         'argumenttreatemptyqueryasnil': True,
         'argumenttrimmode': 0,
@@ -237,20 +261,29 @@ def build_workflow(new_version='2.0'):
             shortcut.get('description', ''),
             icon
         )
-        action_obj = create_launch_file_object(shortcut['path'])
-        
+
+        # Check if there's a second path (path2) for fallback
+        path2 = shortcut.get('path2', '').strip()
+        if path2:
+            # Use smart script that checks both paths
+            script = create_smart_path_script(shortcut['path'], path2)
+            action_obj = create_script_object(script, script_type=0)  # 0 = bash script
+        else:
+            # Use simple launch file object
+            action_obj = create_launch_file_object(shortcut['path'])
+
         objects.append(keyword_obj)
         objects.append(action_obj)
-        
+
         # Create connection
         connections[keyword_obj['uid']] = [
             create_connection(keyword_obj['uid'], action_obj['uid'])
         ]
-        
+
         # Set positions
         uidata[keyword_obj['uid']] = {'xpos': float(x_input), 'ypos': float(y_position)}
         uidata[action_obj['uid']] = {'xpos': float(x_action), 'ypos': float(y_position)}
-        
+
         y_position += y_spacing
     
     # Process web shortcuts
@@ -352,16 +385,16 @@ def build_workflow(new_version='2.0'):
     uidata[version_paste['uid']] = {'xpos': float(x_action + 180), 'ypos': float(y_position)}
     y_position += y_spacing
 
-    # Add utility: fe (file search in _FERAL directory)
-    fe_icon = get_icon_path('fe')
+    # Add utility: f (file search in _FERAL directory)
+    f_icon = get_icon_path('f')
     # Use bash wrapper to call Python script
-    fe_script_content = '/usr/bin/python3 ./utilities/feral-search.py "$1"'
+    f_script_content = '/usr/bin/python3 ./utilities/feral-search.py "$1"'
     feral_filter = create_script_filter_object(
-        'fe',
+        'f',
         'Search _FERAL',
         'Search files in _FERAL directory',
-        fe_script_content,
-        fe_icon
+        f_script_content,
+        f_icon
     )
     feral_open = create_open_file_action()
 

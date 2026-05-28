@@ -1,0 +1,24 @@
+trigger,tz,format,subtext
+ddt-,local,%Y-%m-%d-%H%M,Date+time dashes (local)
+ddt.,local,%Y.%m.%d.%H%M,Date+time dots (local)
+ddd-,local,%Y-%m-%d,Date dashes (local)
+ddd.,local,%Y.%m.%d,Date dots (local)
+ddf,local,%Y-%m-%d %H:%M,Full date+time (local)
+ddz ,UTC,%y%m%dT%H%MZ,Zulu compact
+ddz-,UTC,%Y-%m-%d-%H%MZ,Zulu dashes
+ddz.,UTC,%Y.%m.%d.%H%MZ,Zulu dots
+ddh ,Pacific/Honolulu,%y%m%dT%H%MHT,Hawaii compact
+ddh-,Pacific/Honolulu,%Y-%m-%d-%H%MHT,Hawaii dashes
+ddh.,Pacific/Honolulu,%Y.%m.%d.%H%MHT,Hawaii dots
+ddp ,America/Los_Angeles,%y%m%dT%H%MPT,Pacific compact
+ddp-,America/Los_Angeles,%Y-%m-%d-%H%MPT,Pacific dashes
+ddp.,America/Los_Angeles,%Y.%m.%d.%H%MPT,Pacific dots
+ddm ,America/Denver,%y%m%dT%H%MMT,Mountain compact
+ddm-,America/Denver,%Y-%m-%d-%H%MMT,Mountain dashes
+ddm.,America/Denver,%Y.%m.%d.%H%MMT,Mountain dots
+ddc ,America/Chicago,%y%m%dT%H%MCT,Central compact
+ddc-,America/Chicago,%Y-%m-%d-%H%MCT,Central dashes
+ddc.,America/Chicago,%Y.%m.%d.%H%MCT,Central dots
+dde ,America/New_York,%y%m%dT%H%MET,Eastern compact
+dde-,America/New_York,%Y-%m-%d-%H%MET,Eastern dashes
+dde.,America/New_York,%Y.%m.%d.%H%MET,Eastern dots

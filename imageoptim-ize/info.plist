@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>co.feralcreative.imageoptim</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>084C4B3E-4C93-45F2-B925-B60622EFA736</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>D94A4D48-8F8D-4B03-AFCB-E476051ACE42</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Feral Creative</string>
+	<key>description</key>
+	<string>Processes selected images with ImageOptim</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>ImageOptim-ize</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>#!/bin/zsh
+
+# Function to send a notification
+function notify() {
+    # Use osascript to show a notification
+    osascript -e "display notification \"$1\" with title \"$2\""
+}
+
+# Notify that the workflow has started
+notify "Optimizing images with ImageOptim..." "ImageOptim Processor"
+
+# Get the file paths from the selection
+FILES=("$@")
+
+# Path to ImageOptim
+IMAGE_OPTIM_PATH="/Applications/ImageOptim.app/Contents/MacOS/ImageOptim"
+
+# Process each file with ImageOptim
+for FILE in "${FILES[@]}"; do
+    "$IMAGE_OPTIM_PATH" "$FILE"
+done
+
+# Notify that the workflow has finished
+notify "Image optimization completed!" "ImageOptim Processor"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>D94A4D48-8F8D-4B03-AFCB-E476051ACE42</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>1</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>34</integer>
+				<key>hotmod</key>
+				<integer>1835008</integer>
+				<key>hotstring</key>
+				<string>I</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>084C4B3E-4C93-45F2-B925-B60622EFA736</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>This workflow is designed to streamline the process of optimizing images directly from the Finder. 
+
+By selecting one or more images and triggering the workflow with a designated hotkey (default is ctrl+shft+cmd+I), users can automatically process their selected images using ImageOptim (https://imageoptim.com/mac).
+
+The workflow begins by sending a notification to inform the user that image optimization is in progress. It then iterates over each selected image file, invoking ImageOptim to remove unnecessary metadata and reduce file size efficiently. Once the optimization process is complete, a final notification is displayed, confirming the successful optimization of the images.</string>
+	<key>uidata</key>
+	<dict>
+		<key>084C4B3E-4C93-45F2-B925-B60622EFA736</key>
+		<dict>
+			<key>xpos</key>
+			<real>405</real>
+			<key>ypos</key>
+			<real>290</real>
+		</dict>
+		<key>D94A4D48-8F8D-4B03-AFCB-E476051ACE42</key>
+		<dict>
+			<key>xpos</key>
+			<real>595</real>
+			<key>ypos</key>
+			<real>290</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.0</string>
+	<key>webaddress</key>
+	<string>feralcreative.co</string>
+</dict>
+</plist>

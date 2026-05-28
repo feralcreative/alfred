@@ -29,14 +29,18 @@ That's it! Run the build script and you have a new `docs` keyword.
 ### shortcuts-files.csv
 
 ```csv
-keyword,name,path,description
-scans,Scans,/Volumes/Feral SSD/Dropbox (Personal)/_Personal/_scans,Personal document scans
+keyword,name,path,path2,description
+scans,Scans,/Volumes/Feral SSD/Dropbox (Personal)/_Personal/_scans,~/Dropbox (Personal)/_Personal/_scans,Personal document scans
+www,WWW Directory,~/www,,Development projects directory
 ```
 
 - **keyword**: The Alfred keyword to trigger (e.g., `scans`)
 - **name**: Display name shown in Alfred
-- **path**: Full path to file or folder (supports `~` for home directory)
+- **path**: Primary path to file or folder (supports `~` for home directory)
+- **path2**: (Optional) Fallback path if primary doesn't exist - useful for different machines
 - **description**: Subtitle shown in Alfred
+
+**Note:** If you provide a `path2`, the workflow will automatically check both paths and open the first one that exists. This is useful when your Dropbox folder is in different locations on different computers.
 
 ### shortcuts-web.csv
 

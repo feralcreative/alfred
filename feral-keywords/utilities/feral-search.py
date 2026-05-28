@@ -9,7 +9,12 @@ import sys
 import json
 import subprocess
 
-SEARCH_DIR = "/Volumes/Feral SSD/Dropbox (Personal)/_FERAL"
+CANDIDATE_DIRS = [
+    "/Volumes/Feral SSD/Dropbox (Personal)/_FERAL",
+    os.path.expanduser("~/Library/CloudStorage/Dropbox-Personal/_FERAL"),
+    os.path.expanduser("~/Library/CloudStorage/Dropbox-Personal1/_FERAL"),
+]
+SEARCH_DIRS = [p for p in CANDIDATE_DIRS if os.path.isdir(p)]
 
 def get_file_icon(file_path):
     """Get appropriate icon for file type"""
@@ -18,136 +23,100 @@ def get_file_icon(file_path):
     else:
         return {"type": "fileicon", "path": file_path}
 
-def search_files(query, max_results=50):
-    """Search for files matching query in _FERAL directory using Spotlight"""
-    results = []
+def search_files(query, max_results=200):
+    """Search files across all existing _FERAL directories using Spotlight.
 
-    # Check if directory exists
-    if not os.path.exists(SEARCH_DIR):
+    Iterates every candidate dir that exists on this machine; missing ones
+    are skipped silently. Per-directory errors are also swallowed so a
+    flaky volume doesn't break the whole search.
+    """
+    if not SEARCH_DIRS:
         return [{
-            "title": "Directory not found",
-            "subtitle": SEARCH_DIR,
+            "title": "No _FERAL directories found",
+            "subtitle": "Checked: " + ", ".join(CANDIDATE_DIRS),
             "valid": False
         }]
 
-    # If no query, show top-level items
-    if not query:
+    scored_results = []
+    seen_paths = set()
+
+    for search_dir in SEARCH_DIRS:
         try:
-            for item in sorted(os.listdir(SEARCH_DIR)):
-                if item.startswith('.'):
-                    continue
-                item_path = os.path.join(SEARCH_DIR, item)
-                results.append({
-                    "title": item,
-                    "subtitle": item_path,
-                    "arg": item_path,
-                    "type": "file",
-                    "icon": get_file_icon(item_path)
-                })
-                if len(results) >= max_results:
-                    break
-        except Exception as e:
-            return [{
-                "title": "Error reading directory",
-                "subtitle": str(e),
-                "valid": False
-            }]
-    else:
-        # Use mdfind (Spotlight) for fast searching
-        try:
-            # Search for files with name containing query in SEARCH_DIR
+            if not query or len(query) < 1:
+                for item in sorted(os.listdir(search_dir)):
+                    if item.startswith('.'):
+                        continue
+                    item_path = os.path.join(search_dir, item)
+                    if item_path in seen_paths:
+                        continue
+                    seen_paths.add(item_path)
+                    scored_results.append({
+                        "score": 0,
+                        "title": item,
+                        "subtitle": item,
+                        "arg": item_path,
+                        "type": "file",
+                        "icon": get_file_icon(item_path)
+                    })
+                continue
+
             cmd = [
                 'mdfind',
-                '-onlyin', SEARCH_DIR,
+                '-onlyin', search_dir,
                 f'kMDItemFSName == "*{query}*"c'
             ]
-
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+            if result.returncode != 0:
+                continue
 
-            if result.returncode == 0:
-                paths = result.stdout.strip().split('\n')
-                paths = [p for p in paths if p]  # Remove empty strings
+            for file_path in result.stdout.strip().split('\n'):
+                if not file_path or file_path in seen_paths:
+                    continue
+                if not os.path.exists(file_path):
+                    continue
+                filename = os.path.basename(file_path)
+                if filename.startswith('.'):
+                    continue
+                seen_paths.add(file_path)
+                depth = file_path.count('/') - search_dir.count('/')
+                rel_path = os.path.relpath(file_path, search_dir)
+                scored_results.append({
+                    "score": depth,
+                    "title": filename,
+                    "subtitle": rel_path,
+                    "arg": file_path,
+                    "type": "file",
+                    "icon": get_file_icon(file_path)
+                })
+        except (subprocess.TimeoutExpired, OSError):
+            continue
 
-                # Build results with relevance scoring
-                scored_results = []
-                query_lower = query.lower()
+    scored_results.sort(key=lambda x: (x['score'], x['title'].lower()))
 
-                for file_path in paths:
-                    if not os.path.exists(file_path):
-                        continue
-
-                    filename = os.path.basename(file_path)
-                    filename_lower = filename.lower()
-
-                    # Calculate relevance score (lower is better)
-                    # 1. Exact match = 0
-                    # 2. Starts with query = 1
-                    # 3. Contains query = position where it appears
-                    # 4. Add depth penalty
-                    if filename_lower == query_lower:
-                        score = 0
-                    elif filename_lower.startswith(query_lower):
-                        score = 1
-                    else:
-                        score = filename_lower.find(query_lower) + 2
-
-                    # Add depth penalty (prefer shallower files)
-                    depth = file_path.count('/') - SEARCH_DIR.count('/')
-                    score += depth * 100
-
-                    rel_path = os.path.relpath(file_path, SEARCH_DIR)
-
-                    scored_results.append({
-                        "score": score,
-                        "title": filename,
-                        "subtitle": rel_path,
-                        "arg": file_path,
-                        "type": "file",
-                        "icon": get_file_icon(file_path)
-                    })
-
-                # Sort by score, then alphabetically
-                scored_results.sort(key=lambda x: (x['score'], x['title'].lower()))
-
-                # Remove score from results and limit to max_results
-                for item in scored_results[:max_results]:
-                    del item['score']
-                    results.append(item)
-            else:
-                return [{
-                    "title": "Search error",
-                    "subtitle": result.stderr or "mdfind failed",
-                    "valid": False
-                }]
-
-        except subprocess.TimeoutExpired:
-            return [{
-                "title": "Search timeout",
-                "subtitle": "Search took too long",
-                "valid": False
-            }]
-        except Exception as e:
-            return [{
-                "title": "Error searching",
-                "subtitle": str(e),
-                "valid": False
-            }]
+    results = []
+    for item in scored_results[:max_results]:
+        del item['score']
+        results.append(item)
 
     if not results:
         return [{
             "title": "No results found",
-            "subtitle": f"No files matching '{query}' in _FERAL",
+            "subtitle": "No files found in _FERAL",
             "valid": False
         }]
 
     return results
 
 def main():
-    """Main function"""
-    query = sys.argv[1] if len(sys.argv) > 1 else ""
-    
-    results = search_files(query)
-    
+    """Main function
+
+    When alfredfiltersresults is enabled in the workflow, Alfred handles
+    the filtering. The script should return all results regardless of query.
+    """
+    # Ignore the query parameter - Alfred will filter the results
+    # We pass empty string to get all top-level items
+    results = search_files("")
+
     output = {"items": results}
     print(json.dumps(output))
 
