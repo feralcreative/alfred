@@ -175,15 +175,21 @@ Every Alfred workflow is a directory containing:
 
 ### Packaging Workflows
 
-Workflows are packaged as `.alfredworkflow` files (ZIP archives):
+Workflows are packaged as `.alfredworkflow` files (ZIP archives with `info.plist`
+at the archive root). Use the repo-level tooling — do not hand-roll `zip`:
 
 ```bash
-# Manual packaging
-zip -r workflow-name.alfredworkflow . -x "*.git*" -x "*.DS_Store"
+# Build a package (delegates to package.sh under the hood)
+./wf build <workflow-dir>
+./wf build --all
 
-# Using package.sh (several workflows have this)
-./package.sh
+# package.sh is the underlying engine; wf is the entrypoint you normally use
+./package.sh <workflow-dir>
 ```
+
+`package.sh` reads the workflow name from `info.plist`, lints it with `plutil`,
+zips the whole directory flat (with a shared exclude list), and verifies the
+archive. See `docs/package.md` for full details.
 
 ## 🔑 Common Patterns
 
@@ -232,37 +238,50 @@ Alfred provides environment variables:
 
 ## 🛠️ Development Workflow
 
+### Build & Delivery (the `wf` lifecycle)
+
+`wf` (repo root) is the single entrypoint for building and installing workflows.
+
+```text
+./wf build   [<name>|.|--all]   # package <name> into a .alfredworkflow
+./wf install [<name>|.|--all]   # build, then open the package so Alfred prompts to import
+./wf list                       # every workflow: name, bundle id, installed UID
+./wf help
+```
+
+`<name>` is a workflow directory name (e.g. `feral-workspaces`), a path, or `.`
+for the current directory. `wf build` delegates to `package.sh`; `wf install`
+also runs `open` on the resulting package, which is the scripted equivalent of
+double-clicking it — Alfred shows its import/update dialog for you to confirm.
+With `--all`, Alfred queues one import prompt per workflow.
+
+### Source vs. installed — why editing alone does nothing
+
+Editing a file in a workflow's **source** directory (e.g. `feral-keywords/`) has
+no effect on the running workflow. Alfred runs from its **installed** copy under
+`_prod/workflows/user.workflow.<UID>/` (a symlink into the Dropbox/Feral-SSD
+Alfred preferences). Alfred matches an imported workflow to its installed copy by
+**bundle id** and updates it in place. So a change is only live after you
+repackage **and** re-import. `wf install` does both. (`./wf list` shows the
+bundle-id → installed-UID mapping.)
+
 ### Adding a New Workflow
 
-1. Create directory in repository root
-2. Build workflow in Alfred Preferences
-3. Export as `.alfredworkflow`
-4. Add README.md with documentation
-5. Optional: Add `package.sh` for easy packaging
-6. Update main README.md
+1. Create a directory in the repository root with an `info.plist`.
+2. Build the workflow in Alfred Preferences (or generate the plist with a script).
+3. Add a `README.md` with documentation.
+4. `./wf install <dir>` and confirm the import in Alfred.
+5. Update the main `README.md`.
 
 ### Modifying Existing Workflows
 
-**IMPORTANT:** Changes must be deployed to `_prod/workflows/` to be active in Alfred!
-
-1. Edit files in workflow directory (e.g., `feral-keywords/`)
-2. For plist changes: Edit in Alfred GUI or use Python
-3. **Deploy to production:**
-   - Find the workflow UID in `_prod/workflows/`
-   - Copy updated files to `_prod/workflows/user.workflow.{UID}/`
-4. Test in Alfred (Alfred will auto-reload when files change)
-5. Update documentation
-
-**Example: Deploying feral-keywords changes**
-
-```bash
-# Find the workflow UID
-grep -l "Feral Keywords" _prod/workflows/*/info.plist
-
-# Copy updated files
-cp feral-keywords/info.plist _prod/workflows/user.workflow.9BCA3289-84E4-4783-81AF-5A6382B80FB4/
-cp feral-keywords/utilities/*.py _prod/workflows/user.workflow.9BCA3289-84E4-4783-81AF-5A6382B80FB4/utilities/
-```
+1. Edit files in the workflow directory (CSV/plist/scripts).
+   - For CSV-driven workflows (feral-keywords, feral-time), edit the CSVs and run
+     that workflow's `build.sh` / `rebuild.sh` — it regenerates `info.plist` and
+     then hands off to `wf install` automatically.
+   - For others, edit the source directly.
+2. `./wf install <name>` → confirm the import/update dialog in Alfred.
+3. Test in Alfred, then update documentation.
 
 ### Testing Workflows
 
@@ -293,11 +312,10 @@ This workflow was recently refactored (2025-12-19) and serves as a good example 
 # 1. Edit CSV files
 echo "github,GitHub,https://github.com,GitHub homepage" >> shortcuts-web.csv
 
-# 2. Rebuild workflow
-./rebuild.sh  # or: python3 build-workflow.py && mv info.plist.new info.plist
+# 2. Rebuild + install (regenerates info.plist, then hands off to wf install)
+./build.sh            # prompts before replacing info.plist; --major for a major bump
 
-# 3. Reload in Alfred
-# Alfred Preferences → Workflows → Right-click → Reload
+# 3. Confirm the import/update dialog in Alfred
 ```
 
 ### Icon System

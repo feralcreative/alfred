@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+# wf — single entrypoint for building and installing the Alfred workflows in this repo.
+#
+# Usage:
+#   ./wf build   [<name>|.|--all]   # package <name> into a .alfredworkflow (uses package.sh)
+#   ./wf install [<name>|.|--all]   # build, then open the package so Alfred prompts to import
+#   ./wf list                       # list every workflow: name, bundle id, installed UID
+#   ./wf help
+#
+# <name> is a workflow directory name (e.g. feral-workspaces), a path, or "." for the
+# current directory. A workflow directory is any repo subdir (excluding _* dirs) that
+# contains an info.plist at its root.
+#
+# Lifecycle: edit source in the workflow dir -> `wf install <name>` -> confirm the
+# import dialog in Alfred. Editing source does NOT change the running workflow until it
+# is re-imported; Alfred matches by bundle id and updates the installed copy in place.
+
+set -euo pipefail
+
+REPO="$(cd "$(dirname "$0")" && pwd)"
+PACKAGE="$REPO/package.sh"
+PROD_WORKFLOWS="$REPO/_prod/workflows"
+
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
+info() { echo -e "${BLUE}[INFO]${NC} $1"; }
+ok()   { echo -e "${GREEN}[OK]${NC} $1"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+err()  { echo -e "${RED}[ERR]${NC} $1" >&2; }
+
+usage() {
+  sed -n '2,18p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+# Read a top-level string key (name, bundleid) from an info.plist.
+plist_key() {
+  local key="$1" plist="$2"
+  if command -v plutil >/dev/null; then
+    plutil -extract "$key" raw -o - "$plist" 2>/dev/null && return
+  fi
+  awk "/<key>$key<\\/key>/{getline; gsub(/.*<string>|<\\/string>.*/, \"\"); print; exit}" "$plist"
+}
+
+# Resolve a user-supplied target to a workflow directory (absolute path).
+resolve_dir() {
+  local target="$1" dir
+  case "$target" in
+    .)  dir="$PWD" ;;
+    /*) dir="$target" ;;
+    *)  if [[ -d "$REPO/$target" ]]; then dir="$REPO/$target"; else dir="$PWD/$target"; fi ;;
+  esac
+  dir="${dir%/}"
+  if [[ ! -f "$dir/info.plist" ]]; then
+    err "$target: no info.plist found (looked in '$dir')"
+    return 1
+  fi
+  echo "$dir"
+}
+
+# Enumerate workflow dirs in the repo (excludes _* and dirs without info.plist).
+workflow_dirs() {
+  local d
+  for d in "$REPO"/*/; do
+    d="${d%/}"
+    [[ "$(basename "$d")" == _* ]] && continue
+    [[ -f "$d/info.plist" ]] && echo "$d"
+  done
+}
+
+# Find the installed user.workflow.<UID> dir for a given bundle id, or empty.
+installed_dir_for_bundle() {
+  local bundleid="$1" d
+  [[ -n "$bundleid" ]] || return 0
+  [[ -d "$PROD_WORKFLOWS" ]] || return 0
+  for d in "$PROD_WORKFLOWS"/*/; do
+    [[ -f "$d/info.plist" ]] || continue
+    if [[ "$(plist_key bundleid "$d/info.plist")" == "$bundleid" ]]; then
+      echo "${d%/}"
+      return 0
+    fi
+  done
+}
+
+build_one() { "$PACKAGE" "$1"; }
+
+# Build (if needed) and open the package for one workflow dir so Alfred imports it.
+install_one() {
+  local dir="$1" name pkg
+  build_one "$dir"
+  name="$(plist_key name "$dir/info.plist")"
+  pkg="$dir/${name}.alfredworkflow"
+  if [[ ! -f "$pkg" ]]; then
+    err "expected package not found: $pkg"
+    return 1
+  fi
+  info "Opening in Alfred (confirm the import/update dialog): ${name}.alfredworkflow"
+  open "$pkg"
+}
+
+cmd_build() {
+  local target="${1:-.}"
+  if [[ "$target" == "--all" ]]; then
+    "$PACKAGE" --all
+  else
+    local dir; dir="$(resolve_dir "$target")" || return 1
+    build_one "$dir"
+  fi
+}
+
+cmd_install() {
+  local target="${1:-.}"
+  if [[ "$target" == "--all" ]]; then
+    warn "Installing all workflows — Alfred will queue one import prompt per workflow."
+    local d rc=0
+    while IFS= read -r d; do
+      install_one "$d" || rc=1
+    done < <(workflow_dirs)
+    return "$rc"
+  else
+    local dir; dir="$(resolve_dir "$target")" || return 1
+    install_one "$dir"
+  fi
+}
+
+cmd_list() {
+  if [[ ! -d "$PROD_WORKFLOWS" ]]; then
+    warn "Installed-workflows dir not readable (is the Feral SSD mounted?): $PROD_WORKFLOWS"
+    warn "Showing source info only; installed UID will read 'unknown'."
+  fi
+  printf "%-22s %-32s %-28s %s\n" "DIR" "NAME" "BUNDLE ID" "INSTALLED"
+  printf "%-22s %-32s %-28s %s\n" "---" "----" "---------" "---------"
+  local d name bundleid inst
+  while IFS= read -r d; do
+    name="$(plist_key name "$d/info.plist")"
+    bundleid="$(plist_key bundleid "$d/info.plist")"
+    if [[ -d "$PROD_WORKFLOWS" ]]; then
+      inst="$(installed_dir_for_bundle "$bundleid")"
+      if [[ -n "$inst" ]]; then inst="$(basename "$inst")"; else inst="not installed"; fi
+    else
+      inst="unknown"
+    fi
+    printf "%-22s %-32s %-28s %s\n" "$(basename "$d")" "$name" "${bundleid:-?}" "$inst"
+  done < <(workflow_dirs)
+}
+
+main() {
+  local cmd="${1:-help}"; shift || true
+  case "$cmd" in
+    build)        cmd_build "${1:-.}" ;;
+    install)      cmd_install "${1:-.}" ;;
+    list|ls)      cmd_list ;;
+    help|-h|--help) usage ;;
+    *) err "unknown command: $cmd"; echo; usage; exit 1 ;;
+  esac
+}
+
+main "$@"

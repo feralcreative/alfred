@@ -30,27 +30,9 @@ if [ $? -ne 0 ]; then
 fi
 echo
 
-# Clean up old package
-if [ -f "Feral Workspaces.alfredworkflow" ]; then
-    rm "Feral Workspaces.alfredworkflow"
-    echo "🗑️  Removed old workflow package"
-fi
-
-# Package the workflow
-echo "📦 Packaging workflow..."
-zip -r "Feral Workspaces.alfredworkflow" info.plist icon.png *.png
-
-# Verify package was created
-if [ -f "Feral Workspaces.alfredworkflow" ]; then
-    echo "✅ Workflow packaged successfully!"
-    echo
-    
-    # Open the workflow in Alfred
-    echo "🚀 Opening workflow in Alfred..."
-    sleep 1  # Brief pause to ensure packaging is complete
-    open "Feral Workspaces.alfredworkflow"
-    echo "✅ Workflow should now be loaded in Alfred!"
-else
-    echo "❌ Failed to create workflow package!"
-    exit 1
-fi
+# Package + install via the repo-level wf dispatcher.
+# wf builds the .alfredworkflow (using package.sh, which zips the whole dir so
+# README.md and every resource are included) then opens it so Alfred prompts to
+# import — confirm the dialog in Alfred.
+REPO="$(cd "$(dirname "$0")/.." && pwd)"
+"$REPO/wf" install feral-workspaces

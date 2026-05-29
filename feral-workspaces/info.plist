@@ -104,7 +104,7 @@ def main():
     
     # Building the path using os.path.expanduser to ensure the home directory is properly referenced
     home_dir = os.path.expanduser("~")
-    search_dir = os.path.join(home_dir, "www", "_vscode", "workspaces")
+    search_dir = os.path.join(home_dir, "www", "_code", "workspaces")
     icons_dir = os.path.join(search_dir, "icons")
     items = []
     

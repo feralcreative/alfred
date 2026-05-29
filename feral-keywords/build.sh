@@ -26,19 +26,12 @@ if [ -f "info.plist.new" ]; then
     if [[ "$response" =~ ^[Yy]$ ]]; then
         mv info.plist.new info.plist
         echo "✅ info.plist updated!"
-        
-        # Package the workflow
-        echo
-        echo "📦 Packaging workflow..."
-        ./package.sh
-        
-        # Open the workflow in Alfred
-        if [ -f "Feral Keywords.alfredworkflow" ]; then
-            echo "🚀 Opening workflow in Alfred..."
-            sleep 1  # Brief pause to ensure packaging is complete
-            open "Feral Keywords.alfredworkflow"
-            echo "✅ Workflow should now be loaded in Alfred!"
-        fi
+
+        # Package + install via the repo-level wf dispatcher.
+        # wf builds the .alfredworkflow (using package.sh) then opens it so
+        # Alfred prompts to import — confirm the dialog in Alfred.
+        REPO="$(cd "$(dirname "$0")/.." && pwd)"
+        "$REPO/wf" install feral-keywords
     else
         echo "❌ Build cancelled. Review info.plist.new manually."
         exit 1

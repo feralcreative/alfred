@@ -18,7 +18,7 @@ An Alfred workflow for quickly opening VS Code workspace files from your develop
 
 1. Download the `Feral Workspaces.alfredworkflow` file
 2. Double-click to install in Alfred
-3. Ensure your workspace files are located in `~/www/_vscode/workspaces/`
+3. Ensure your workspace files are located in `~/www/_code/workspaces/`
 
 ## Usage
 
@@ -39,7 +39,7 @@ dev             → Shows all available workspaces
 The workflow expects your workspace files to be organized as follows:
 
 ```
-~/www/_vscode/workspaces/
+~/www/_code/workspaces/
 ├── project1.code-workspace
 ├── project2.code-workspace
 ├── webapp.code-workspace
@@ -62,7 +62,7 @@ If no custom icon exists, the workflow uses the default icon.
 ## Configuration
 
 - **Keyword**: `dev` (can be changed in Alfred preferences)
-- **Workspace Directory**: `~/www/_vscode/workspaces/` (hardcoded)
+- **Workspace Directory**: `~/www/_code/workspaces/` (hardcoded)
 - **Supported Files**: `.code-workspace` files only
 
 ## Technical Details
@@ -80,12 +80,12 @@ If no custom icon exists, the workflow uses the default icon.
 ## Troubleshooting
 
 ### No workspaces found
-- Ensure workspace files are in `~/www/_vscode/workspaces/`
+- Ensure workspace files are in `~/www/_code/workspaces/`
 - Check that files have `.code-workspace` extension
 - Verify directory permissions
 
 ### Icons not showing
-- Check icon files are in `~/www/_vscode/workspaces/icons/`
+- Check icon files are in `~/www/_code/workspaces/icons/`
 - Ensure icon names match pattern: `icon-{projectname}.png`
 - Use lowercase names without spaces
 

@@ -78,6 +78,24 @@ Each workflow can be installed independently:
 3. Alfred will prompt you to install the workflow
 4. Click "Import" to add it to your Alfred workflows
 
+## Development
+
+This repo uses a single entrypoint, `wf`, to build and install workflows:
+
+```bash
+./wf list                 # list every workflow, its bundle id, and installed status
+./wf build <name>         # package <name> into a .alfredworkflow
+./wf install <name>       # build, then open it so Alfred prompts to import
+./wf build --all          # package every workflow
+```
+
+Editing a workflow's source does not change the running workflow until it is
+repackaged and re-imported — `wf install` does both. CSV-driven workflows
+(feral-keywords, feral-time) have their own `build.sh` / `rebuild.sh` that
+regenerate `info.plist` and then hand off to `wf install`. For the full
+edit → build → install lifecycle and the underlying packager, see
+[`_AI_AGENT_PRIMER.md`](./_AI_AGENT_PRIMER.md) and [`docs/package.md`](./docs/package.md).
+
 ## Requirements
 
 - **Alfred 4+** with Powerpack license

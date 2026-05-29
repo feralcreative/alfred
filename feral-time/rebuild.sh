@@ -25,3 +25,9 @@ fi
 
 mv info.plist.new info.plist
 echo "info.plist updated."
+
+# Package + install via the repo-level wf dispatcher (cwd is already this dir).
+# wf builds the .alfredworkflow (using package.sh) then opens it so Alfred
+# prompts to import — confirm the dialog in Alfred.
+REPO="$(cd .. && pwd)"
+"$REPO/wf" install feral-time
