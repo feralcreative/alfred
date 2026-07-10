@@ -1,6 +1,8 @@
 trigger,tz,format,subtext
+ddt ,local,%y%m%dT%H%M,Date+time compact (local)
 ddt-,local,%Y-%m-%d-%H%M,Date+time dashes (local)
 ddt.,local,%Y.%m.%d.%H%M,Date+time dots (local)
+ddd ,local,%y%m%d,Date compact (local)
 ddd-,local,%Y-%m-%d,Date dashes (local)
 ddd.,local,%Y.%m.%d,Date dots (local)
 ddf,local,%Y-%m-%d %H:%M,Full date+time (local)
