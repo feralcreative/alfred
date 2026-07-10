@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>co.feralcreative.visa</string>
+	<key>connections</key>
+	<dict>
+		<key>25C82CE5-78AF-40F9-B43A-B20D3E2A216D</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>E05F5411-E052-4958-BCD9-5EE3563FFBB7</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>001B5F02-244D-402F-8A18-0BF04EDEA14D</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>6A4BCF94-F1C6-46E0-98E6-8AB09673C6E4</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>3B1C3933-C0D1-4D94-AD83-E6A94FA472E1</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>8988236B-B84F-4EF2-858B-C01A728113E4</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>01FC17BC-8412-4A2A-93B4-039F384EDFB5</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>C1997697-61DA-47D0-AE57-74C78D9A4D62</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>287EE38F-3D92-41E7-9501-630C8DF294E4</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>C591D73A-B19E-439B-BDD2-7C678F90CDF5</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>FA69C647-42A2-4D5F-A161-B3BC92BB8991</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>8988236B-B84F-4EF2-858B-C01A728113E4</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>D6AEFD4C-6B5B-4B3E-B93A-3F8A613C7837</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>D0BD70C3-51AD-4056-9B7C-771BAF752AB5</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>25C82CE5-78AF-40F9-B43A-B20D3E2A216D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>D6AEFD4C-6B5B-4B3E-B93A-3F8A613C7837</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>2105E606-163C-470F-B87F-D3F42127B2A0</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>CF4F1682-C036-4812-88C9-36E564C6C6CD</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string>Reveal file in Finder</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Ziad Ezzat</string>
+	<key>description</key>
+	<string>Workflow to open Visa templates, folders, and files</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Visa</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string># Open the PPT template from whichever machine's Dropbox path exists
+path1="/Volumes/Feral Storage/Cannonball Dropbox/Client Work/Visa/Visa Brand Resources/Templates - MS Office/Visa_Corp_PPT/VS0000 Visa Corp PPT 16x9 Template v10.00 250109.potx"
+path2="~/Library/CloudStorage/Dropbox-Cannonball/Client Work/Visa/Visa Brand Resources/Templates - MS Office/Visa_Corp_PPT/VS0000 Visa Corp PPT 16x9 Template v10.00 250109.potx"
+
+# Expand tilde in paths
+path1="${path1/#\~/$HOME}"
+path2="${path2/#\~/$HOME}"
+
+if [ -e "$path1" ]; then
+    open "$path1"
+elif [ -e "$path2" ]; then
+    open "$path2"
+else
+    osascript -e 'display notification "Neither path exists" with title "Path Not Found"'
+fi
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>E05F5411-E052-4958-BCD9-5EE3563FFBB7</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>ppt</string>
+						<key>outputlabel</key>
+						<string>Powerpoint</string>
+						<key>uid</key>
+						<string>001B5F02-244D-402F-8A18-0BF04EDEA14D</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>xls</string>
+						<key>outputlabel</key>
+						<string>Excel</string>
+						<key>uid</key>
+						<string>3B1C3933-C0D1-4D94-AD83-E6A94FA472E1</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>vs</string>
+						<key>outputlabel</key>
+						<string>Jobs</string>
+						<key>uid</key>
+						<string>01FC17BC-8412-4A2A-93B4-039F384EDFB5</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>doc</string>
+						<key>outputlabel</key>
+						<string>Word</string>
+						<key>uid</key>
+						<string>287EE38F-3D92-41E7-9501-630C8DF294E4</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>b2b</string>
+						<key>outputlabel</key>
+						<string>B2B</string>
+						<key>uid</key>
+						<string>FA69C647-42A2-4D5F-A161-B3BC92BB8991</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>25C82CE5-78AF-40F9-B43A-B20D3E2A216D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>fixedorder</key>
+				<false/>
+				<key>items</key>
+				<string>[{"imagefile":"ae88537f701a6c8bc248401b4de5362cd0912d2a.png","title":"PPTX","arg":"ppt","subtitle":"Visa Powerpoint Template"},{"imagefile":"61d944243a91a6f5defc0c38b55ca48076e3791a.png","title":"XLSX","arg":"xls","subtitle":"Visa Excel Template"},{"title":"Visa Job Folder","arg":"vs","subtitle":"Open a specific Visa Job Folder"},{"imagefile":"ae88537f701a6c8bc248401b4de5362cd0912d2a.png","title":"B2B","arg":"b2b","subtitle":"Visa B2B Powerpoint Template"}]</string>
+				<key>keyword</key>
+				<string>visa</string>
+				<key>matchmode</key>
+				<integer>0</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>Find a Visa Thing</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.listfilter</string>
+			<key>uid</key>
+			<string>D0BD70C3-51AD-4056-9B7C-771BAF752AB5</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>openwith</key>
+				<string></string>
+				<key>sourcefile</key>
+				<string>/Volumes/Feral SSD/Dropbox (Personal)/_FERAL/Visa/_assets/templates/Visa Themed Excel Template.xltx</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openfile</string>
+			<key>uid</key>
+			<string>6A4BCF94-F1C6-46E0-98E6-8AB09673C6E4</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>json</key>
+				<string>{
+  "alfredworkflow" : {
+    "config" : {
+      "scopes" : [
+        "\/Volumes\/Feral Storage\/Cannonball Dropbox\/Client Work\/Visa\/Projects",
+        "\/Users\/ziad\/Library\/CloudStorage\/Dropbox-Cannonball\/Client Work\/Visa\/Projects"
+      ]
+    },
+    "variables" : {
+      "folder" : "Visa Projects"
+    }
+  }
+}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.json</string>
+			<key>uid</key>
+			<string>8988236B-B84F-4EF2-858B-C01A728113E4</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>openwith</key>
+				<string></string>
+				<key>sourcefile</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openfile</string>
+			<key>uid</key>
+			<string>2105E606-163C-470F-B87F-D3F42127B2A0</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>anchorfields</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>daterange</key>
+				<integer>0</integer>
+				<key>fields</key>
+				<array>
+					<dict>
+						<key>field</key>
+						<string>kMDItemDisplayName</string>
+						<key>not</key>
+						<false/>
+						<key>split</key>
+						<true/>
+						<key>value</key>
+						<string>{query}</string>
+						<key>words</key>
+						<true/>
+					</dict>
+					<dict>
+						<key>field</key>
+						<string>kMDItemAlternateNames</string>
+						<key>not</key>
+						<false/>
+						<key>split</key>
+						<true/>
+						<key>value</key>
+						<string>{query}</string>
+						<key>words</key>
+						<true/>
+					</dict>
+					<dict>
+						<key>field</key>
+						<string>kMDItemFinderComment</string>
+						<key>not</key>
+						<false/>
+						<key>split</key>
+						<true/>
+						<key>value</key>
+						<string>{query}</string>
+						<key>words</key>
+						<true/>
+					</dict>
+				</array>
+				<key>includesystem</key>
+				<false/>
+				<key>keyword</key>
+				<string>vs</string>
+				<key>limit</key>
+				<integer>0</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>scopes</key>
+				<array>
+					<string>/Volumes/Feral Storage/Cannonball Dropbox/Client Work/Visa/Projects</string>
+					<string>/Users/ziad/Library/CloudStorage/Dropbox-Cannonball/Client Work/Visa/Projects</string>
+				</array>
+				<key>sortmode</key>
+				<integer>0</integer>
+				<key>subtext</key>
+				<string>within {var:folder}</string>
+				<key>title</key>
+				<string>Search job folders</string>
+				<key>types</key>
+				<array>
+					<string>public.folder</string>
+				</array>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.filefilter</string>
+			<key>uid</key>
+			<string>D6AEFD4C-6B5B-4B3E-B93A-3F8A613C7837</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>path</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.revealfile</string>
+			<key>uid</key>
+			<string>CF4F1682-C036-4812-88C9-36E564C6C6CD</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>openwith</key>
+				<string></string>
+				<key>sourcefile</key>
+				<string>/Volumes/Feral SSD/Dropbox (Personal)/_FERAL/Visa/_assets/templates/Visa Themed Excel Template.xltx</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openfile</string>
+			<key>uid</key>
+			<string>C1997697-61DA-47D0-AE57-74C78D9A4D62</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string># Open the B2B PPT template from whichever machine's Dropbox path exists
+path1="/Volumes/Feral Storage/Cannonball Dropbox/Client Work/Visa/Visa Brand Resources/B2B Brand WIP/VISA B2B Template Presentation PPT v02.00 250905.potx"
+path2="~/Library/CloudStorage/Dropbox-Cannonball/Client Work/Visa/Visa Brand Resources/B2B Brand WIP/VISA B2B Template Presentation PPT v02.00 250905.potx"
+
+# Expand tilde in paths
+path1="${path1/#\~/$HOME}"
+path2="${path2/#\~/$HOME}"
+
+if [ -e "$path1" ]; then
+    open "$path1"
+elif [ -e "$path2" ]; then
+    open "$path2"
+else
+    osascript -e 'display notification "Neither path exists" with title "Path Not Found"'
+fi
+</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>C591D73A-B19E-439B-BDD2-7C678F90CDF5</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>2105E606-163C-470F-B87F-D3F42127B2A0</key>
+		<dict>
+			<key>note</key>
+			<string>4. Pressing the Return key opens the file you selected.</string>
+			<key>xpos</key>
+			<real>780</real>
+			<key>ypos</key>
+			<real>305</real>
+		</dict>
+		<key>25C82CE5-78AF-40F9-B43A-B20D3E2A216D</key>
+		<dict>
+			<key>xpos</key>
+			<real>205</real>
+			<key>ypos</key>
+			<real>130</real>
+		</dict>
+		<key>6A4BCF94-F1C6-46E0-98E6-8AB09673C6E4</key>
+		<dict>
+			<key>xpos</key>
+			<real>500</real>
+			<key>ypos</key>
+			<real>190</real>
+		</dict>
+		<key>8988236B-B84F-4EF2-858B-C01A728113E4</key>
+		<dict>
+			<key>xpos</key>
+			<real>405</real>
+			<key>ypos</key>
+			<real>255</real>
+		</dict>
+		<key>C1997697-61DA-47D0-AE57-74C78D9A4D62</key>
+		<dict>
+			<key>xpos</key>
+			<real>495</real>
+			<key>ypos</key>
+			<real>515</real>
+		</dict>
+		<key>C591D73A-B19E-439B-BDD2-7C678F90CDF5</key>
+		<dict>
+			<key>xpos</key>
+			<real>495</real>
+			<key>ypos</key>
+			<real>655</real>
+		</dict>
+		<key>CF4F1682-C036-4812-88C9-36E564C6C6CD</key>
+		<dict>
+			<key>note</key>
+			<string>5. Hold the Alt key when pressing Return to reveal the file in Finder instead.</string>
+			<key>xpos</key>
+			<real>780</real>
+			<key>ypos</key>
+			<real>490</real>
+		</dict>
+		<key>D0BD70C3-51AD-4056-9B7C-771BAF752AB5</key>
+		<dict>
+			<key>xpos</key>
+			<real>35</real>
+			<key>ypos</key>
+			<real>150</real>
+		</dict>
+		<key>D6AEFD4C-6B5B-4B3E-B93A-3F8A613C7837</key>
+		<dict>
+			<key>note</key>
+			<string>3. Type the name of the file you want to search for within the folder defined earlier.</string>
+			<key>xpos</key>
+			<real>500</real>
+			<key>ypos</key>
+			<real>320</real>
+		</dict>
+		<key>E05F5411-E052-4958-BCD9-5EE3563FFBB7</key>
+		<dict>
+			<key>xpos</key>
+			<real>500</real>
+			<key>ypos</key>
+			<real>60</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
+	<key>variables</key>
+	<dict>
+		<key>ppt</key>
+		<string>Powerpoint</string>
+		<key>xl</key>
+		<string>Excel</string>
+	</dict>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://feralcreative.co</string>
+</dict>
+</plist>
