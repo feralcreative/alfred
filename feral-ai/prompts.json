@@ -1,0 +1,35 @@
+[
+  {
+    "keyword": "air",
+    "name": "Company Research (MCP)",
+    "description": "Research a client to populate the cb-client-mcp knowledge base",
+    "template": "prompts/company-research.txt",
+    "notification": "Research prompt copied — paste into your AI chat",
+    "fields": [
+      {
+        "var": "COMPANY",
+        "label": "Company name",
+        "hint": "Exact legal / trade name (e.g. Visa Inc.)",
+        "required": true
+      },
+      {
+        "var": "EXCHANGE",
+        "label": "Exchange",
+        "hint": "e.g. NYSE — leave blank if private",
+        "required": false
+      },
+      {
+        "var": "TICKER",
+        "label": "Ticker",
+        "hint": "e.g. V — leave blank if private",
+        "required": false
+      },
+      {
+        "var": "SLUG",
+        "label": "Client slug",
+        "hint": "lowercase dir name (e.g. visa)",
+        "required": true
+      }
+    ]
+  }
+]

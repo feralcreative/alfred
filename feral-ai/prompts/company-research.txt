@@ -1,0 +1,14 @@
+Read ~/.claude/docs/COMPANY_RESEARCH_INSTRUCTIONS.md and follow it to build a
+knowledge base on {{COMPANY}} ({{EXCHANGE_TICKER}}). Client slug: {{SLUG}}.
+
+Windows: use the doc's two-window model — recency default of trailing 5 years, plus full history since founding for the foundational dimensions (identity/history, milestones, firsts, moat origin, long-running litigation).
+Categories: all.
+
+First do the Pre-work scope confirmation interactively — confirm the exact legal name, public/private status, slug, both time windows, and category scope with me, and do NOT start research until I approve.
+
+Once scope is locked, run the execution phase as a workflow:
+- fan out one researcher per research dimension in parallel;
+- then run an adversarial verification pass that re-fetches every cited URL, flags any sentence lacking a citation, flags any unadjudicated source conflict, and confirms the [full history] dimensions trace back to founding;
+- then synthesize the output files inline yourself in a single context — do NOT fan out the synthesis or the company/overview.md tie-together.
+
+Use the tooling order from the doc: EdgarTools → Firecrawl → built-in web tools. Priority is comprehensive, accurate, fully-cited output, not speed — token cost is not a concern.
