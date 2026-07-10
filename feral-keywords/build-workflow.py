@@ -11,6 +11,13 @@ import plistlib
 import re
 from datetime import datetime
 
+# Recursive-search shortcuts (CSV `mode` column) -> search.py engine/type flags.
+# Blank mode = plain open-the-folder behavior (handled separately).
+SEARCH_MODES = {
+    'search': '--engine walk --types files',        # small folders, exhaustive
+    'search-all': '--engine spotlight --types all',  # huge trees, fast, files+folders
+}
+
 def get_current_version():
     """Read current version from existing info.plist, or return default"""
     if os.path.exists('info.plist'):
@@ -185,10 +192,15 @@ def create_paste_action():
         'version': 1
     }
 
-def create_script_filter_object(keyword, name, subtext, script_content, icon_path=None):
-    """Create a script filter object"""
+def create_script_filter_object(keyword, name, subtext, script_content, icon_path=None, alfred_filters=True):
+    """Create a script filter object.
+
+    alfred_filters=True lets Alfred filter the script's results client-side
+    (the script returns everything). alfred_filters=False is query-driven: the
+    script receives the typed query and returns only its own matches.
+    """
     config = {
-        'alfredfiltersresults': True,
+        'alfredfiltersresults': alfred_filters,
         'alfredfiltersresultsmatchmode': 0,
         'argumenttreatemptyqueryasnil': True,
         'argumenttrimmode': 0,
@@ -235,6 +247,19 @@ def create_open_file_action():
         'version': 3
     }
 
+def create_reveal_file_action():
+    """Create a 'Reveal File in Finder' action.
+
+    An empty path means it reveals whatever file path is passed in as the
+    argument, opening that file's enclosing folder with the file selected.
+    """
+    return {
+        'config': {'path': ''},
+        'type': 'alfred.workflow.action.revealfile',
+        'uid': str(uuid.uuid4()).upper(),
+        'version': 1
+    }
+
 def build_workflow(new_version='2.0'):
     """Build the complete workflow plist"""
     
@@ -255,33 +280,52 @@ def build_workflow(new_version='2.0'):
     # Process file shortcuts
     for shortcut in file_shortcuts:
         icon = get_icon_path(shortcut['keyword'])
-        keyword_obj = create_keyword_object(
-            shortcut['keyword'],
-            shortcut['name'],
-            shortcut.get('description', ''),
-            icon
-        )
+        mode = (shortcut.get('mode') or '').strip().lower()
 
-        # Check if there's a second path (path2) for fallback
-        path2 = shortcut.get('path2', '').strip()
-        if path2:
-            # Use smart script that checks both paths
-            script = create_smart_path_script(shortcut['path'], path2)
-            action_obj = create_script_object(script, script_type=0)  # 0 = bash script
+        if mode in SEARCH_MODES:
+            # Recursive search: a script filter that returns matches from the
+            # folder, wired to a Reveal action so Return opens the match's
+            # enclosing folder (file selected). The mode picks engine + types:
+            #   search      = walk + files  (small folders, exhaustive)
+            #   search-all  = spotlight + files & folders (huge trees, fast)
+            flags = SEARCH_MODES[mode]
+            search_script = f'/usr/bin/python3 ./utilities/search.py {flags} "{shortcut["path"]}" "$1"'
+            input_obj = create_script_filter_object(
+                shortcut['keyword'],
+                shortcut['name'],
+                shortcut.get('description', ''),
+                search_script,
+                icon,
+                alfred_filters=False  # query-driven: the script does the matching
+            )
+            action_obj = create_reveal_file_action()
         else:
-            # Use simple launch file object
-            action_obj = create_launch_file_object(shortcut['path'])
+            input_obj = create_keyword_object(
+                shortcut['keyword'],
+                shortcut['name'],
+                shortcut.get('description', ''),
+                icon
+            )
+            # Check if there's a second path (path2) for fallback
+            path2 = (shortcut.get('path2') or '').strip()
+            if path2:
+                # Use smart script that checks both paths
+                script = create_smart_path_script(shortcut['path'], path2)
+                action_obj = create_script_object(script, script_type=0)  # 0 = bash script
+            else:
+                # Use simple launch file object
+                action_obj = create_launch_file_object(shortcut['path'])
 
-        objects.append(keyword_obj)
+        objects.append(input_obj)
         objects.append(action_obj)
 
         # Create connection
-        connections[keyword_obj['uid']] = [
-            create_connection(keyword_obj['uid'], action_obj['uid'])
+        connections[input_obj['uid']] = [
+            create_connection(input_obj['uid'], action_obj['uid'])
         ]
 
         # Set positions
-        uidata[keyword_obj['uid']] = {'xpos': float(x_input), 'ypos': float(y_position)}
+        uidata[input_obj['uid']] = {'xpos': float(x_input), 'ypos': float(y_position)}
         uidata[action_obj['uid']] = {'xpos': float(x_action), 'ypos': float(y_position)}
 
         y_position += y_spacing
