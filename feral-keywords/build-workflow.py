@@ -6,10 +6,19 @@ Generates info.plist with all shortcuts as individual keyword triggers
 
 import csv
 import os
+import shutil
 import uuid
 import plistlib
 import re
 from datetime import datetime
+
+# Alfred stores an input object's icon as a PNG named after that object's uid,
+# sitting at the workflow root. Object uids are regenerated on every build, so
+# these files are rewritten (and stale ones pruned) by sync_object_icons().
+UID_PNG_RE = re.compile(
+    r'^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}\.png$',
+    re.IGNORECASE,
+)
 
 # Recursive-search shortcuts (CSV `mode` column) -> search.py engine/type flags.
 # Blank mode = plain open-the-folder behavior (handled separately).
@@ -74,9 +83,39 @@ def get_icon_path(keyword):
     # Check for PNG only
     icon_path = f'icons/{keyword}.png'
     if os.path.exists(icon_path):
-        # Return relative path for Alfred (relative to workflow directory)
+        # Recorded on the object as config.icon. Alfred does not read that key —
+        # sync_object_icons() turns it into the <uid>.png file Alfred does read.
         return {'path': icon_path}
     return None
+
+def sync_object_icons(plist_path='info.plist'):
+    """Copy each object's icon into place as <uid>.png, pruning stale ones.
+
+    Alfred ignores config.icon on keyword and script filter objects; it looks
+    for a PNG named after the object's uid at the workflow root, falling back
+    to the workflow's own icon.png when that file is missing. Run this after
+    info.plist is in place, since uids change on every build.
+    """
+    with open(plist_path, 'rb') as f:
+        plist = plistlib.load(f)
+
+    wanted = {}
+    for obj in plist.get('objects', []):
+        source = (obj.get('config') or {}).get('icon', {}).get('path')
+        if source and os.path.exists(source):
+            wanted[obj['uid']] = source
+
+    for uid, source in wanted.items():
+        shutil.copyfile(source, f'{uid}.png')
+
+    pruned = [
+        name for name in os.listdir('.')
+        if UID_PNG_RE.match(name) and name[:-4] not in wanted
+    ]
+    for name in pruned:
+        os.remove(name)
+
+    return wanted, pruned
 
 def create_keyword_object(keyword, name, subtext="", icon_path=None):
     """Create a keyword input object"""
@@ -501,6 +540,17 @@ def main():
     """Main build function"""
     import sys
 
+    # Icon sync runs against the live info.plist, so build.sh calls it as a
+    # second pass once info.plist.new has been moved into place.
+    if '--sync-icons' in sys.argv:
+        wanted, pruned = sync_object_icons()
+        print(f"✓ Wrote {len(wanted)} object icon(s)")
+        for uid, source in sorted(wanted.items(), key=lambda kv: kv[1]):
+            print(f"  - {source} → {uid}.png")
+        if pruned:
+            print(f"  Pruned {len(pruned)} stale object icon(s)")
+        return
+
     # Check for major update flag
     major_update = '--major' in sys.argv
 
@@ -523,6 +573,17 @@ def main():
     print(f"  - {len([o for o in plist['objects'] if o['type'] == 'alfred.workflow.input.keyword'])} keywords")
     print(f"  - {len([o for o in plist['objects'] if o['type'] == 'alfred.workflow.action.openurl'])} web shortcuts")
     print(f"  - {len([o for o in plist['objects'] if o['type'] == 'alfred.workflow.action.launchfiles'])} file/app shortcuts")
+    # Icons are only materialized once info.plist.new is live (uids change every
+    # build), so flag keywords with no icons/<keyword>.png while we're here —
+    # they fall back to the workflow's own icon.png in Alfred's results.
+    iconless = [
+        o['config']['keyword'] for o in plist['objects']
+        if 'keyword' in o.get('type', '') or 'scriptfilter' in o.get('type', '')
+        if o['config'].get('keyword') and 'icon' not in o['config']
+    ]
+    if iconless:
+        print(f"  - {len(iconless)} keyword(s) with no icon: {', '.join(iconless)}")
+
     print("\nReview info.plist.new, then rename to info.plist to activate")
 
 if __name__ == "__main__":

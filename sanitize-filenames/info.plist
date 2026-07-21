@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>co.feralcreative.</string>
+	<string>co.feralcreative.sanitizefilenames</string>
 	<key>category</key>
 	<string>Productivity</string>
 	<key>connections</key>
@@ -421,6 +421,6 @@ The script makes the following changes to your selected files:
 	<key>version</key>
 	<string>1.0.2</string>
 	<key>webaddress</key>
-	<string>https://feralcreative.co</string>
+	<string>http://feralcreative.co</string>
 </dict>
 </plist>

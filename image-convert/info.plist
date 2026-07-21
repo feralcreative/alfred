@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>bundleid</key>
-    <string>com.custom.imageconvert</string>
+    <string>co.feralcreative.imageconvert</string>
     <key>category</key>
     <string>Image Processing</string>
     <key>connections</key>
@@ -36,7 +36,7 @@
         </array>
     </dict>
     <key>createdby</key>
-    <string>Ziad Ezzat</string>
+    <string>Feral Creative</string>
     <key>description</key>
     <string>Convert between PNG and JPEG formats</string>
     <key>disabled</key>
@@ -105,6 +105,6 @@
     <key>version</key>
     <string>1.0</string>
     <key>webaddress</key>
-    <string>https://github.com/feralcreative/alfred</string>
+    <string>http://feralcreative.co</string>
 </dict>
 </plist>

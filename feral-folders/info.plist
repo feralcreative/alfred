@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>co.feralcreative.folderactions</string>
+	<key>connections</key>
+	<dict>
+		<key>094DB544-9DDC-4186-8438-22AE2F75F9FE</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>4C16B876-3DBD-4B78-934F-C27F360C763D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>97B477E9-CAD9-45FF-85C4-540542CA5707</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>F4A32E9F-66C1-4CFA-A34B-8C0F4B8E4DCB</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>ED1841C4-DDC3-41A5-B066-D1BB1473822A</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>65A4D420-E636-4B40-B72F-70818ED8372B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Feral Creative</string>
+	<key>description</key>
+	<string>Finder folder actions: flatten nested files to the root, delete empty folders, or group files into folders by extension.</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Feral Folders</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>unfold</string>
+				<key>subtext</key>
+				<string>Remove all folders and deliver the files to the root.</string>
+				<key>text</key>
+				<string>Flatten Folder Hierarchy</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>97B477E9-CAD9-45FF-85C4-540542CA5707</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>#!/bin/zsh
+
+# Use AppleScript to get the current Finder directory
+DIR=$(osascript -e 'tell application "Finder" to if exists window 1 then POSIX path of (target of window 1 as alias)')
+
+# Check if DIR is not empty
+if [[ -n "$DIR" ]]; then
+    # Move nested files (at least one folder deep) to the top-level directory,
+    # with duplicate handling. mindepth 2 leaves loose root files untouched.
+    find "$DIR" -mindepth 2 -type f | while IFS= read -r file; do
+        base=$(basename "$file")
+        target="$DIR/$base"
+        # If the target file already exists, append a number to the filename
+        if [[ -e "$target" ]]; then
+            ext="${base##*.}"
+            name="${base%.*}"
+            count=1
+            while [[ -e "$DIR/${name}_$count.$ext" ]]; do
+                ((count++))
+            done
+            target="$DIR/${name}_$count.$ext"
+        fi
+        mv "$file" "$target"
+    done
+
+    # Repeatedly attempt to remove empty directories
+    while IFS= read -r -d '' dir; do
+        rmdir "$dir" 2&gt;/dev/null
+    done &lt; &lt;(find "$DIR" -type d -mindepth 1 -print0 | sort -zr)
+else
+    echo "No Finder window detected."
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>F4A32E9F-66C1-4CFA-A34B-8C0F4B8E4DCB</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>defold</string>
+				<key>subtext</key>
+				<string>Deletes all empty folders and subfolders in the frontmost Finder window</string>
+				<key>text</key>
+				<string>Delete all empty folders</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>ED1841C4-DDC3-41A5-B066-D1BB1473822A</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>127</integer>
+				<key>script</key>
+				<string>on killEmpty(fol)	tell application "Finder"		repeat with f in (get fol's folders)			my killEmpty(f)		end repeat		if (count items of fol) is 0 then delete fol		delay 0.1	end tellend killEmptytell application "Finder"	repeat with f in (get folders of window 1)		my killEmpty(f)	end repeatend tell</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>6</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>65A4D420-E636-4B40-B72F-70818ED8372B</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>tidy</string>
+				<key>subtext</key>
+				<string>Creates folders for each file type and sorts accordingly.</string>
+				<key>text</key>
+				<string>Group Files by Extension</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>094DB544-9DDC-4186-8438-22AE2F75F9FE</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>#!/bin/zsh
+
+# Use AppleScript to get the current Finder directory
+DIR=$(osascript -e 'tell application "Finder" to if exists window 1 then POSIX path of (target of window 1 as alias)')
+
+# Check if DIR is not empty
+if [[ -n "$DIR" ]]; then
+    # Find all files and group them by extension, ignoring dot files
+    find "$DIR" -type f -mindepth 1 | while IFS= read -r file; do
+        filename=$(basename "$file")
+        
+        # Skip files starting with a dot
+        if [[ "$filename" == .* ]]; then
+            continue
+        fi
+        
+        # Skip files with no extension (leave them where they are)
+        if [[ "$filename" != *.* ]]; then
+            continue
+        fi
+
+        ext="${filename##*.}"
+        ext="${ext:l}"          # lowercase so .JPG and .jpg share one folder
+        ext_dir="$DIR/$ext"
+        
+        # Create a directory for the extension if it doesn't exist
+        mkdir -p "$ext_dir"
+        
+        # Move the file into the corresponding extension directory
+        mv -n "$file" "$ext_dir/"
+    done
+
+    # Optionally, remove any empty directories left over
+    while IFS= read -r -d '' dir; do
+        rmdir "$dir" 2&gt;/dev/null
+    done &lt; &lt;(find "$DIR" -type d -mindepth 1 -print0 | sort -zr)
+else
+    echo "No Finder window detected."
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>4C16B876-3DBD-4B78-934F-C27F360C763D</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>Finder folder actions. Run a keyword against the frontmost Finder window:
+
+• unfold — Flatten Folder Hierarchy: move every nested file up to the top level (duplicates get a numeric suffix), then remove the emptied subfolders.
+• defold — Delete Empty Folders: recursively remove empty folders and subfolders.
+• tidy — Group Files by Extension: sort files into folders named for their (lowercased) extension.
+
+All three act on the folder open in the frontmost Finder window.</string>
+	<key>uidata</key>
+	<dict>
+		<key>094DB544-9DDC-4186-8438-22AE2F75F9FE</key>
+		<dict>
+			<key>xpos</key>
+			<real>150</real>
+			<key>ypos</key>
+			<real>460</real>
+		</dict>
+		<key>4C16B876-3DBD-4B78-934F-C27F360C763D</key>
+		<dict>
+			<key>xpos</key>
+			<real>420</real>
+			<key>ypos</key>
+			<real>460</real>
+		</dict>
+		<key>65A4D420-E636-4B40-B72F-70818ED8372B</key>
+		<dict>
+			<key>xpos</key>
+			<real>420</real>
+			<key>ypos</key>
+			<real>320</real>
+		</dict>
+		<key>97B477E9-CAD9-45FF-85C4-540542CA5707</key>
+		<dict>
+			<key>xpos</key>
+			<real>150</real>
+			<key>ypos</key>
+			<real>170</real>
+		</dict>
+		<key>ED1841C4-DDC3-41A5-B066-D1BB1473822A</key>
+		<dict>
+			<key>xpos</key>
+			<real>150</real>
+			<key>ypos</key>
+			<real>315</real>
+		</dict>
+		<key>F4A32E9F-66C1-4CFA-A34B-8C0F4B8E4DCB</key>
+		<dict>
+			<key>xpos</key>
+			<real>420</real>
+			<key>ypos</key>
+			<real>170</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array/>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.0</string>
+	<key>webaddress</key>
+	<string>http://feralcreative.co</string>
+</dict>
+</plist>

@@ -27,6 +27,11 @@ if [ -f "info.plist.new" ]; then
         mv info.plist.new info.plist
         echo "✅ info.plist updated!"
 
+        # Object uids are regenerated on every build, so the per-keyword icons
+        # have to be re-laid-down as <uid>.png against the new info.plist.
+        echo
+        python3 build-workflow.py --sync-icons
+
         # Package + install via the repo-level wf dispatcher.
         # wf builds the .alfredworkflow (using package.sh) then opens it so
         # Alfred prompts to import — confirm the dialog in Alfred.

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>dev.feralcreative.workspace</string>
+	<string>co.feralcreative.workspaces</string>
 	<key>connections</key>
 	<dict>
 		<key>65C22C75-122B-49B9-B09F-2A8790C2104C</key>
@@ -21,7 +21,7 @@
 		</array>
 	</dict>
 	<key>createdby</key>
-	<string>Ziad Ezzat</string>
+	<string>Feral Creative</string>
 	<key>description</key>
 	<string>Open a Development Workspace</string>
 	<key>disabled</key>
@@ -227,6 +227,6 @@ if __name__ == '__main__':
 	<key>version</key>
 	<string>1.12</string>
 	<key>webaddress</key>
-	<string>feralcreative.dev</string>
+	<string>http://feralcreative.co</string>
 </dict>
 </plist>

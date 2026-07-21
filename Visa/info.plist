@@ -120,7 +120,7 @@
 		</array>
 	</dict>
 	<key>createdby</key>
-	<string>Ziad Ezzat</string>
+	<string>Feral Creative</string>
 	<key>description</key>
 	<string>Workflow to open Visa templates, folders, and files</string>
 	<key>disabled</key>
@@ -586,6 +586,6 @@ fi
 	<key>version</key>
 	<string>1.0.0</string>
 	<key>webaddress</key>
-	<string>https://feralcreative.co</string>
+	<string>http://feralcreative.co</string>
 </dict>
 </plist>

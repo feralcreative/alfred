@@ -53,7 +53,7 @@
 		</array>
 	</dict>
 	<key>createdby</key>
-	<string>Ziad Ezzat</string>
+	<string>Feral Creative</string>
 	<key>description</key>
 	<string>Search 3D model sites simultaneously</string>
 	<key>disabled</key>
@@ -209,6 +209,6 @@
 	<key>version</key>
 	<string>1.0</string>
 	<key>webaddress</key>
-	<string>https://github.com/feralcreative/alfred</string>
+	<string>http://feralcreative.co</string>
 </dict>
 </plist>

@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>com.ezzat.port-roulette</string>
+	<string>co.feralcreative.portroulette</string>
 	<key>category</key>
 	<string>Tools</string>
 	<key>connections</key>
@@ -36,7 +36,7 @@
 		</array>
 	</dict>
 	<key>createdby</key>
-	<string>Ziad Ezzat</string>
+	<string>Feral Creative</string>
 	<key>description</key>
 	<string>Generate unique port numbers for development projects. Avoids well-known ports and remembers previously assigned ports.</string>
 	<key>disabled</key>
@@ -205,6 +205,6 @@ The workflow maintains a configuration file at ~/.port-roulette-config.json to t
 	<key>version</key>
 	<string>1.0.0</string>
 	<key>webaddress</key>
-	<string>https://github.com/feralcreative/alfred</string>
+	<string>http://feralcreative.co</string>
 </dict>
 </plist>

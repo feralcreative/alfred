@@ -140,6 +140,6 @@ The workflow begins by sending a notification to inform the user that image opti
 	<key>version</key>
 	<string>1.0</string>
 	<key>webaddress</key>
-	<string>feralcreative.co</string>
+	<string>http://feralcreative.co</string>
 </dict>
 </plist>
