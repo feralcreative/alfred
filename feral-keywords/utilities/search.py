@@ -14,7 +14,8 @@ Two engines:
 
 The query is split on whitespace into terms; every term must match (AND). Each
 result's arg is the full path so a downstream Reveal-in-Finder action opens the
-match's enclosing folder with it selected.
+match's enclosing folder with it selected. An empty query returns the scope
+itself, flagged with the open_folder variable so it opens rather than reveals.
 """
 
 import argparse
@@ -148,7 +149,17 @@ def main():
         return
 
     if not query:
-        emit([{"title": "Type to search…", "subtitle": f"Searches {scope}", "valid": False}])
+        # No query typed: offer the scope itself so Return just opens the folder.
+        # open_folder tells the downstream action to open rather than reveal —
+        # revealing a folder would select it in its parent instead.
+        emit([{
+            "title": f"Open {os.path.basename(scope.rstrip('/'))}",
+            "subtitle": f"{scope} — or type to search",
+            "arg": scope,
+            "type": "file",
+            "icon": {"type": "fileicon", "path": scope},
+            "variables": {"open_folder": "1"},
+        }])
         return
 
     terms = [t.lower() for t in query.split() if t]

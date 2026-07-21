@@ -286,18 +286,21 @@ def create_open_file_action():
         'version': 3
     }
 
-def create_reveal_file_action():
-    """Create a 'Reveal File in Finder' action.
+def create_search_open_action():
+    """Create the action a search shortcut's results feed into.
 
-    An empty path means it reveals whatever file path is passed in as the
-    argument, opening that file's enclosing folder with the file selected.
+    A match is revealed in Finder — its enclosing folder opens with the match
+    selected. The one exception is the bare-scope item search.py returns for an
+    empty query, which sets open_folder=1: that opens the folder itself, since
+    revealing it would select it in its parent instead.
     """
-    return {
-        'config': {'path': ''},
-        'type': 'alfred.workflow.action.revealfile',
-        'uid': str(uuid.uuid4()).upper(),
-        'version': 1
-    }
+    script = '''if [ "$open_folder" = "1" ]; then
+    open "$1"
+else
+    open -R "$1"
+fi
+'''
+    return create_script_object(script, script_type=0)  # 0 = bash
 
 def build_workflow(new_version='2.0'):
     """Build the complete workflow plist"""
@@ -337,7 +340,7 @@ def build_workflow(new_version='2.0'):
                 icon,
                 alfred_filters=False  # query-driven: the script does the matching
             )
-            action_obj = create_reveal_file_action()
+            action_obj = create_search_open_action()
         else:
             input_obj = create_keyword_object(
                 shortcut['keyword'],
